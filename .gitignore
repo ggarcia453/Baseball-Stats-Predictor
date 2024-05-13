@@ -1,3 +1,9 @@
+#cache from pybaseball module 
 __pycache__/
+
+#CSV data folders
 batting_data/
 pitching_data/
+
+#pretrained models
+models/
