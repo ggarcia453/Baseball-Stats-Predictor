@@ -38,9 +38,16 @@ def dataset_loader(args):
     print("Loading data...")
     download = True
     s = args.save
+    match args.dataset.split("_")[0]:
+        case "batting":
+            path = "batting_data/" + args.dataset
+        case "pitching":
+            path = "pitching_data/" + args.dataset
+        case _:
+            raise ValidationError("Not valid Set")
     if args.from_csv:
         try:
-            dataset = pandas.read_csv(args.dataset + ".csv").drop('Unnamed: 0', axis=1)
+            dataset = pandas.read_csv(path + ".csv").drop('Unnamed: 0', axis=1)
             download = False
         except FileNotFoundError: 
             print("No csv found in current directory\nDowlnloading and saving data from FanGraphs")
@@ -49,6 +56,6 @@ def dataset_loader(args):
         dataset = get_dataset(args.dataset)
     print("Loaded")
     if s:
-        dataset.to_csv(f"{args.dataset}.csv")
+        dataset.to_csv(f"{path}.csv")
         print("saved to csv")
     return dataset
