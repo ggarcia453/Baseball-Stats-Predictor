@@ -1,7 +1,7 @@
 #! /bin/bash
 PYTHONSRCPATH=src/main.py
 CSV=true
-EPOCH_NUM=100
+EPOCH_NUM=250
 
 
 if [ "$CSV" = true ] ; then

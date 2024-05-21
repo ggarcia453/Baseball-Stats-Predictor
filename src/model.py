@@ -31,9 +31,9 @@ class baseball_model(torch.nn.Module):
     def train(self, epochs, learningRate, data):
         print("Training")
         stats_dict = df_tensor_convert(data)
-        stats_dict = {i: self.normalize(j,i) for i,j in stats_dict.items()}
         y = stats_dict['WAR']
         del stats_dict['WAR']
+        stats_dict = {i: self.normalize(j,i) for i,j in stats_dict.items()}
         x = torch.stack(tuple(list(stats_dict.values())),dim=1)
         for epoch in range(int(epochs)):
             inputs = Variable(x)
@@ -45,6 +45,8 @@ class baseball_model(torch.nn.Module):
                 learningRate /= 2
             # get loss for the predicted output
             loss = criterion(outputs, labels)
+            if torch.isnan(loss):
+                raise ValueError("NAN loss")
             # get gradients w.r.t to parameters
             loss.backward()
             # update parameters
