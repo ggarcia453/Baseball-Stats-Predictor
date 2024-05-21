@@ -37,7 +37,7 @@ def df_tensor_convert(data):
 def dataset_loader(args):
     print("Loading data...")
     download = True
-    s = args.save
+    s = args.save_csv
     match args.dataset.split("_")[0]:
         case "batting":
             path = "batting_data/" + args.dataset
