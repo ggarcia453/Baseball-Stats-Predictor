@@ -3,8 +3,8 @@
 conda create -n ball 
 conda activate ball
 conda install pytorch torchvision -c pytorch
-git clone https://github.com/ggarcia453/Baseball-WAR-Predictor
-cd Baseball-WAR-Predictor/
+git clone https://github.com/ggarcia453/Baseball-Stats-Predictor
+cd Baseball-Stats-Predictor/
 pip install -r requirements.txt
 ```
 
