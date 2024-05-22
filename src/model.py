@@ -13,6 +13,8 @@ class baseball_model(torch.nn.Module):
         self.output = torch.nn.Linear(inputDim, 1)
         self.dims = inputDim + 1
         self.stats = {}
+        self.loss = -1
+        self.best = None
         
     def forward(self, x):
         out = self.linear4(self.linear3(self.linear2(self.linear1(x))))
@@ -25,7 +27,7 @@ class baseball_model(torch.nn.Module):
         return (arr - i)/(a -i)
 
     def save():
-        torch.save(model.state_dict(), "model")
+        torch.save(self.best, "models/best.pt")
     
 
     def train(self, epochs, learningRate, data):
@@ -33,12 +35,12 @@ class baseball_model(torch.nn.Module):
         stats_dict = df_tensor_convert(data)
         y = stats_dict['WAR']
         del stats_dict['WAR']
-        stats_dict = {i: self.normalize(j,i) for i,j in stats_dict.items()}
         x = torch.stack(tuple(list(stats_dict.values())),dim=1)
         for epoch in range(int(epochs)):
             inputs = Variable(x)
             labels = Variable(y)
-            outputs = self.forward(inputs)
+            outputs = self.forward(inputs).reshape(-1)
+            print(outputs)
             criterion = torch.nn.MSELoss() 
             optimizer = torch.optim.SGD(self.parameters(), lr=learningRate)
             if (epoch + 1 %10 ==0):
@@ -48,11 +50,18 @@ class baseball_model(torch.nn.Module):
             if torch.isnan(loss):
                 raise ValueError("NAN loss")
             # get gradients w.r.t to parameters
+            if self.loss == -1:
+                self.loss = loss.item()
+                self.best = self.state_dict()
+            elif self.loss > loss.item():
+                self.loss = loss.item()
+                self.best = self.state_dict()
             loss.backward()
             # update parameters
             optimizer.step()
             print(f'epoch {epoch + 1}, loss {loss.item()}')
         # print(self.denormalize(outputs, 'WAR'))
+        print(f'Minimum loss {self.loss}')
     
     def eval(self, *inputs):
         pass
