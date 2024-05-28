@@ -1,5 +1,5 @@
 from pybaseball import pitching_stats, batting_stats
-import torch, pandas, numpy
+import torch, pandas, numpy, tqdm
 
 class ValidationError(Exception):
     pass
@@ -20,9 +20,9 @@ def validate_dataset(args, dataset):
     rlist = [i for i in list(dataset.columns.values) if i not in args.input_args]
     dataset = dataset.drop(rlist,axis=1).dropna()
     try:
-        assert (dataset.columns.values[0] == 'WAR'), "Something is wrong with dataset"
+        assert (dataset.columns.values[0] == args.output_args), "Something is wrong with dataset"
     except AssertionError: 
-        dataset.insert(0, 'WAR', dataset.pop('WAR'))
+        dataset.insert(0, args.output_args, dataset.pop(args.output_args))
     return dataset
     
     
@@ -47,7 +47,7 @@ def dataset_loader(args):
             raise ValidationError("Not valid Set")
     if args.from_csv:
         try:
-            dataset = pandas.read_csv(path + ".csv").drop('Unnamed: 0', axis=1)
+            dataset = pandas.concat([chunk for chunk in tqdm.tqdm(pandas.read_csv(path + ".csv", chunksize=1000), desc='Loading data')])
             download = False
         except FileNotFoundError: 
             print("No csv found in current directory\nDowlnloading and saving data from FanGraphs")

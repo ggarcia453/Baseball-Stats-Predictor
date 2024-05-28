@@ -1,4 +1,4 @@
-import torch, numpy, pandas
+import torch, numpy, pandas, os
 from torch.autograd import Variable
 from player_stats import df_tensor_convert
 
@@ -26,15 +26,15 @@ class baseball_model(torch.nn.Module):
         self.stats[name] = [a,i]
         return (arr - i)/(a -i)
 
-    def save():
+    def save(self):
         torch.save(self.best, "models/best.pt")
     
 
-    def train(self, epochs, learningRate, data):
+    def train(self, epochs, learningRate, output, data):
         print("Training")
         stats_dict = df_tensor_convert(data)
-        y = stats_dict['WAR']
-        del stats_dict['WAR']
+        y = stats_dict[output]
+        del stats_dict[output]
         x = torch.stack(tuple(list(stats_dict.values())),dim=1)
         for epoch in range(int(epochs)):
             inputs = Variable(x)
