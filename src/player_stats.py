@@ -1,4 +1,4 @@
-from pybaseball import pitching_stats, batting_stats
+from pybaseball import pitching_stats, batting_stats, playerid_lookup
 import torch, pandas, numpy, tqdm
 
 class ValidationError(Exception):
@@ -35,7 +35,6 @@ def df_tensor_convert(data):
 
 
 def dataset_loader(args):
-    print("Loading data...")
     download = True
     s = args.save_csv
     match args.dataset.split("_")[0]:
@@ -59,3 +58,6 @@ def dataset_loader(args):
         dataset.to_csv(f"{path}.csv")
         print("saved to csv")
     return dataset
+
+def grabid(player):
+    return playerid_lookup(*player)
