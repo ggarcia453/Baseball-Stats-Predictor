@@ -1,5 +1,7 @@
-from pybaseball import pitching_stats, batting_stats, playerid_lookup
+from pybaseball import pitching_stats, batting_stats, playerid_lookup, cache
 import torch, pandas, numpy, tqdm
+
+cache.enable()
 
 class ValidationError(Exception):
     pass
@@ -17,8 +19,7 @@ def get_dataset(dataset):
 
 def validate_dataset(args, dataset):
     assert type(dataset) == pandas.DataFrame, f'Should be Pandas Dataframe'
-    rlist = [i for i in list(dataset.columns.values) if i not in args.input_args]
-    dataset = dataset.drop(rlist,axis=1).dropna()
+    dataset = dataset[args.input_args]
     try:
         assert (dataset.columns.values[0] == args.output_args), "Something is wrong with dataset"
     except AssertionError: 
@@ -27,10 +28,7 @@ def validate_dataset(args, dataset):
     
     
 def df_tensor_convert(data):
-    d = {}
-    for i in data.columns.values:
-        d[i] = torch.Tensor(data[i])
-    return d
+    return torch.from_numpy(data.values).float()
 
 
 

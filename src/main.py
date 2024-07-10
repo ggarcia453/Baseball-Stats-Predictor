@@ -7,7 +7,7 @@ def grab_inputs(args):
     print (args.input_args)
     return args
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(description='Main function for training baseball_models')
     data_pipeline = parser.add_argument_group('Input and Output Pipeline')
     data_pipeline.add_argument('-d', '--dataset', default='batting_data_2000_2019', help='Dataset to use for training. Use format [batting|pitching]_data_[starting year]_[ending year]')
@@ -25,7 +25,9 @@ if __name__ == "__main__":
     if args.load_model:
         args = grab_inputs(args)
         model = baseball_model(args)
-        model.load_state_dict(torch.load(f"{args.load_model}/best.pt"))
+        with open(f"{args.load_model}/best-loss.txt") as f:
+            name = f.readlines()[1].strip()
+        model.load_state_dict(torch.load(f"{args.load_model}/{name}.pt"))
         print(f"model at {args.load_model} loaded")
         if args.retrain:
             pass
@@ -46,7 +48,16 @@ if __name__ == "__main__":
         if (model.dims == 1):
             raise RuntimeError("Model not initialzed correctly")
         print(f"Created {model}")
-        model.train(args.epochs, args.learning_rate, args.output_args, inputs)
+        while True:
+            try:
+                model.train(args.epochs, args.learning_rate, args.output_args, inputs)
+                break
+            except ValueError:
+                model = baseball_model(args)
+                print("NAN loss. New model created")
         if args.save_model:
             model.save(args.save_model)
     print("Completed")
+
+if __name__ == "__main__":
+    main()
