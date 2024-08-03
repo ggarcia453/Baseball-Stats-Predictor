@@ -48,13 +48,16 @@ def main():
         if (model.dims == 1):
             raise RuntimeError("Model not initialzed correctly")
         print(f"Created {model}")
-        while True:
+        count = 0
+        while count < 10:
             try:
                 model.train(args.epochs, args.learning_rate, args.output_args, inputs)
                 break
             except ValueError:
                 model = baseball_model(args)
                 print("NAN loss. New model created")
+                count +=1
+        
         if args.save_model:
             model.save(args.save_model)
     print("Completed")
