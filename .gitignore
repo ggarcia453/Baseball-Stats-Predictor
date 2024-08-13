@@ -7,3 +7,8 @@ pitching_data/
 
 #pretrained models
 models/
+
+.vscode/
+
+api/.env
+api/go.sum
