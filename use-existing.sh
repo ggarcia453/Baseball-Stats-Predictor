@@ -4,8 +4,9 @@ CSV=true
 b_p=batting #should be either batting or pitching
 start_year=1969
 end_year=2019
-model_directory=models/wRC+-WAR
-player="bonds_barry_2007"
+model_directory=models/AVG-HR-OPS-RAR-wRC+-WAR
+name="Barry Bonds"
+year=2002
 TRAIN=false
 
 if [ ! -d "$model_directory" ]; then
@@ -16,5 +17,5 @@ fi
 if [ "$TRAIN" = true ] ; then
     python3 $PYTHONSRCPATH -d $b_p"_data_"$start_year"_"$end_year -c -lm $model_directory -rt
 else
-    python3 $PYTHONSRCPATH -d $b_p"_data_"$start_year"_"$end_year -c -lm $model_directory -pp "$player"
+    python3 $PYTHONSRCPATH -d $b_p"_data_"$start_year"_"$end_year -c -lm $model_directory -pp "$name $year"
 fi

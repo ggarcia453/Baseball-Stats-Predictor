@@ -38,22 +38,22 @@ type Batter struct {
 	IFH                    sql.NullFloat64 `json:"IFH" db:"IFH"`
 	BU                     sql.NullFloat64 `json:"BU" db:"BU"`
 	BUH                    sql.NullFloat64 `json:"BUH" db:"BUH"`
-	BB_percent             sql.NullFloat64 `json:"BB_percent" db:"BB_percent"`
+	BB_percent             sql.NullFloat64 `json:"BB%" db:"BB_percent"`
 	K_percent              sql.NullFloat64 `json:"K_percent" db:"K_percent"`
-	BB_per_K               sql.NullFloat64 `json:"BB_per_K" db:"BB_per_K"`
+	BB_per_K               sql.NullFloat64 `json:"BB/K" db:"BB_per_K"`
 	OBP                    sql.NullFloat64 `json:"OBP" db:"OBP"`
 	SLG                    sql.NullFloat64 `json:"SLG" db:"SLG"`
 	OPS                    sql.NullFloat64 `json:"OPS" db:"OPS"`
 	ISO                    sql.NullFloat64 `json:"ISO" db:"ISO"`
 	BABIP                  sql.NullFloat64 `json:"BABIP" db:"BABIP"`
-	GB_per_FB              sql.NullFloat64 `json:"GB_per_FB" db:"GB_per_FB"`
-	LD_percent             sql.NullFloat64 `json:"LD_percent" db:"LD_percent"`
-	GB_percent             sql.NullFloat64 `json:"GB_percent" db:"GB_percent"`
-	FB_percent             sql.NullFloat64 `json:"FB_percent" db:"FB_percent"`
-	IFFB_percent           sql.NullFloat64 `json:"IFFB_percent" db:"IFFB_percent"`
+	GB_per_FB              sql.NullFloat64 `json:"GB_/FB" db:"GB_per_FB"`
+	LD_percent             sql.NullFloat64 `json:"LD%" db:"LD_percent"`
+	GB_percent             sql.NullFloat64 `json:"GB%" db:"GB_percent"`
+	FB_percent             sql.NullFloat64 `json:"FB%" db:"FB_percent"`
+	IFFB_percent           sql.NullFloat64 `json:"IFFB%" db:"IFFB_percent"`
 	HR_per_FB              sql.NullFloat64 `json:"HR_per_FB" db:"HR_per_FB"`
-	IFH_percent            sql.NullFloat64 `json:"IFH_percent" db:"IFH_percent"`
-	BUH_percent            sql.NullFloat64 `json:"BUH_percent" db:"BUH_percent"`
+	IFH_percent            sql.NullFloat64 `json:"IFH%" db:"IFH_percent"`
+	BUH_percent            sql.NullFloat64 `json:"BUH%" db:"BUH_percent"`
 	WOBA                   sql.NullFloat64 `json:"wOBA" db:"wOBA"`
 	WRAA                   sql.NullFloat64 `json:"wRAA" db:"wRAA"`
 	WRC                    sql.NullFloat64 `json:"wRC" db:"wRC"`
@@ -65,7 +65,7 @@ type Batter struct {
 	WAR                    sql.NullFloat64 `json:"WAR" db:"WAR"`
 	Dol                    sql.NullString  `json:"Dol" db:"Dol"`
 	Spd                    sql.NullFloat64 `json:"Spd" db:"Spd"`
-	WRC_plus               sql.NullFloat64 `json:"wRC_plus" db:"wRC_plus"`
+	WRC_plus               sql.NullFloat64 `json:"wRC+" db:"wRC_plus"`
 	WPA                    sql.NullFloat64 `json:"WPA" db:"WPA"`
 	Plus_WPA               sql.NullFloat64 `json:"plus_WPA" db:"plus_WPA"`
 	RE24                   sql.NullFloat64 `json:"RE24" db:"RE24"`
@@ -73,23 +73,23 @@ type Batter struct {
 	PLI                    sql.NullFloat64 `json:"pLI" db:"pLI"`
 	PhLI                   sql.NullFloat64 `json:"phLI" db:"phLI"`
 	PH                     sql.NullFloat64 `json:"PH" db:"PH"`
-	WPA_per_LI             sql.NullFloat64 `json:"WPA_per_LI" db:"WPA_per_LI"`
+	WPA_per_LI             sql.NullFloat64 `json:"WPA/LI" db:"WPA_per_LI"`
 	Clutch                 sql.NullFloat64 `json:"Clutch" db:"Clutch"`
 	FBv                    sql.NullFloat64 `json:"FBv" db:"FBv"`
-	SL_percent             sql.NullFloat64 `json:"SL_percent" db:"SL_percent"`
+	SL_percent             sql.NullFloat64 `json:"SL%" db:"SL_percent"`
 	SLv                    sql.NullFloat64 `json:"SLv" db:"SLv"`
-	CT_percent             sql.NullFloat64 `json:"CT_percent" db:"CT_percent"`
+	CT_percent             sql.NullFloat64 `json:"CT%" db:"CT_percent"`
 	CTv                    sql.NullFloat64 `json:"CTv" db:"CTv"`
-	CB_percent             sql.NullFloat64 `json:"CB_percent" db:"CB_percent"`
+	CB_percent             sql.NullFloat64 `json:"CB%" db:"CB_percent"`
 	CBv                    sql.NullFloat64 `json:"CBv" db:"CBv"`
-	CH_percent             sql.NullFloat64 `json:"CH_percent" db:"CH_percent"`
+	CH_percent             sql.NullFloat64 `json:"CH%" db:"CH_percent"`
 	CHv                    sql.NullFloat64 `json:"CHv" db:"CHv"`
-	SF_percent             sql.NullFloat64 `json:"SF_percent" db:"SF_percent"`
+	SF_percent             sql.NullFloat64 `json:"SF%" db:"SF_percent"`
 	SFv                    sql.NullFloat64 `json:"SFv" db:"SFv"`
-	KN_percent             sql.NullFloat64 `json:"KN_percent" db:"KN_percent"`
+	KN_percent             sql.NullFloat64 `json:"KN%" db:"KN_percent"`
 	KNv                    sql.NullFloat64 `json:"KNv" db:"KNv"`
-	XX_percent             sql.NullFloat64 `json:"XX_percent" db:"XX_percent"`
-	PO_percent             sql.NullFloat64 `json:"PO_percent" db:"PO_percent"`
+	XX_percent             sql.NullFloat64 `json:"XX%" db:"XX_percent"`
+	PO_percent             sql.NullFloat64 `json:"PO%" db:"PO_percent"`
 	WFB                    sql.NullFloat64 `json:"wFB" db:"wFB"`
 	WSL                    sql.NullFloat64 `json:"wSL" db:"wSL"`
 	WCT                    sql.NullFloat64 `json:"wCT" db:"wCT"`
@@ -97,18 +97,18 @@ type Batter struct {
 	WCH                    sql.NullFloat64 `json:"wCH" db:"wCH"`
 	WSF                    sql.NullFloat64 `json:"wSF" db:"wSF"`
 	WKN                    sql.NullFloat64 `json:"wKN" db:"wKN"`
-	WFB_per_C              sql.NullFloat64 `json:"wFB_per_C" db:"wFB_per_C"`
-	WSL_per_C              sql.NullFloat64 `json:"wSL_per_C" db:"wSL_per_C"`
-	WCT_per_C              sql.NullFloat64 `json:"wCT_per_C" db:"wCT_per_C"`
-	WCB_per_C              sql.NullFloat64 `json:"wCB_per_C" db:"wCB_per_C"`
-	CH_per_C               sql.NullFloat64 `json:"wCH_per_C" db:"wCH_per_C"`
-	WSF_per_C              sql.NullFloat64 `json:"wSF_per_C" db:"wSF_per_C"`
-	WKN_per_C              sql.NullFloat64 `json:"wKN_per_C" db:"wKN_per_C"`
-	OSwing_percent         sql.NullFloat64 `json:"OSwing_percent" db:"OSwing_percent"`
-	ZSwing_percent         sql.NullFloat64 `json:"ZSwing_percent" db:"ZSwing_percent"`
-	Swing_percent          sql.NullFloat64 `json:"Swing_percent" db:"Swing_percent"`
-	OContact_percent       sql.NullFloat64 `json:"OContact_percent" db:"OContact_percent"`
-	ZContact_percent       sql.NullFloat64 `json:"ZContact_percent" db:"ZContact_percent"`
+	WFB_per_C              sql.NullFloat64 `json:"wFB/C" db:"wFB_per_C"`
+	WSL_per_C              sql.NullFloat64 `json:"wSL/C" db:"wSL_per_C"`
+	WCT_per_C              sql.NullFloat64 `json:"wCT/C" db:"wCT_per_C"`
+	WCB_per_C              sql.NullFloat64 `json:"wCB/C" db:"wCB_per_C"`
+	CH_per_C               sql.NullFloat64 `json:"wCH/C" db:"wCH_per_C"`
+	WSF_per_C              sql.NullFloat64 `json:"wSF/C" db:"wSF_per_C"`
+	WKN_per_C              sql.NullFloat64 `json:"wKN/C" db:"wKN_per_C"`
+	OSwing_percent         sql.NullFloat64 `json:"OSwing%" db:"OSwing_percent"`
+	ZSwing_percent         sql.NullFloat64 `json:"ZSwing%" db:"ZSwing_percent"`
+	Swing_percent          sql.NullFloat64 `json:"Swing_%" db:"Swing_percent"`
+	OContact_percent       sql.NullFloat64 `json:"OContact%" db:"OContact_percent"`
+	ZContact_percent       sql.NullFloat64 `json:"ZContact%" db:"ZContact_percent"`
 	Contact_percent        sql.NullFloat64 `json:"Contact_percent" db:"Contact_percent"`
 	Zone_percent           sql.NullFloat64 `json:"Zone_percent" db:"Zone_percent"`
 	FStrike_percent        sql.NullFloat64 `json:"FStrike_percent" db:"FStrike_percent"`

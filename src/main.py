@@ -4,7 +4,6 @@ from player_stats import get_dataset, validate_dataset, dataset_loader
 
 def grab_inputs(args):
     args.input_args = "".join(args.load_model.split("/")[1:]).split("-")
-    print (args.input_args)
     return args
 
 def main():
@@ -32,7 +31,6 @@ def main():
         if args.retrain:
             pass
         else:
-            print(f'Predicting for {args.predict_player.split('_')[1].capitalize()} {args.predict_player.split('_')[0].capitalize()} for the year {args.predict_player.split('_')[-1]}')
             model.predict(args.predict_player)
     else:
         print('Validating Input Output Args')

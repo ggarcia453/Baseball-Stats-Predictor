@@ -1,4 +1,4 @@
-import torch, numpy, pandas, os, uuid
+import torch, numpy, json, os, uuid, requests
 from torch.autograd import Variable
 import matplotlib.pyplot as plt
 from player_stats import df_tensor_convert, grabid
@@ -89,11 +89,15 @@ class baseball_model(torch.nn.Module):
             print(f'epoch {epoch + 1}, loss {loss.item()}')
         print(f'Minimum loss {self.loss}')
     
-    def predict(self, player_year):
-        ls = player_year.split("_")
-        id = grabid(ls[:2]).key_mlbam[0]
-        print(id)
-        
+    def predict(self, player_year:str):
+       first, last, year = player_year.split(" ")        
+       link = f"http://localhost:8080/bat?Name={first}-{last}&Season={year}"
+       list_response = requests.get(link).json()
+       keys = {y : x for x,y  in list(enumerate(self.stats))}
+       valu = {x:list(y.values())[0] for x,y in list_response[0].items() if x in self.stats[:-1] and y['Valid']}
+       tensor = Variable(torch.Tensor([i for _, i  in sorted(list(valu.items()), key= lambda x: keys[x[0]])]))
+       outputs = self.forward(tensor).reshape(-1)
+       print(list(outputs)[0])
     
     def __str__(self):
         return f"Baseball model with {self.dims - 1} input dimension"
