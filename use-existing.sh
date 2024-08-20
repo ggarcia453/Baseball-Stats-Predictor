@@ -1,12 +1,9 @@
 #! /bin/bash
 PYTHONSRCPATH=src/main.py
-CSV=true
 b_p=batting #should be either batting or pitching
-start_year=1969
-end_year=2019
-model_directory=models/AVG-HR-OPS-RAR-wRC+-WAR
-name="Barry Bonds"
-year=2002
+model_directory=models/AVG-HR-OPS-wOBA-wRC+-WAR
+name="Albert Pujols" #Leave Space between first and last name
+year=2011
 TRAIN=false
 
 if [ ! -d "$model_directory" ]; then
@@ -15,7 +12,7 @@ if [ ! -d "$model_directory" ]; then
 fi
 
 if [ "$TRAIN" = true ] ; then
-    python3 $PYTHONSRCPATH -d $b_p"_data_"$start_year"_"$end_year -c -lm $model_directory -rt
+    python3 $PYTHONSRCPATH -m $b_p -c -lm $model_directory -rt
 else
-    python3 $PYTHONSRCPATH -d $b_p"_data_"$start_year"_"$end_year -c -lm $model_directory -pp "$name $year"
+    python3 $PYTHONSRCPATH -m $b_p -c -lm $model_directory -pp "$name $year"
 fi

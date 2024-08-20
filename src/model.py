@@ -3,6 +3,8 @@ from torch.autograd import Variable
 import matplotlib.pyplot as plt
 from player_stats import df_tensor_convert, grabid
 
+class SearchError(Exception):
+    pass
 
 class baseball_model(torch.nn.Module):
     def __init__(self, args):
@@ -15,7 +17,7 @@ class baseball_model(torch.nn.Module):
         self.output = torch.nn.Linear(inputDim, 1)
         self.dims = inputDim + 1
         self.stats = args.input_args
-        self.loss = -1
+        self.loss = float('inf')
         self.best = None
         
     def forward(self, x):
@@ -38,7 +40,7 @@ class baseball_model(torch.nn.Module):
         folder = f"{directory}/{'-'.join(sorted(self.stats))}-{output}"
         if not os.path.exists(folder):
             os.makedirs(folder)
-            torch.save(self.best, f"{folder}/{name}.pt")
+            torch.save(self.state_dict, f"{folder}/{name}.pt")
             with open(f"{folder}/best-loss.txt", "w") as f:
                 f.write(str(self.loss))
                 f.write("\n" + str(name))
@@ -58,7 +60,7 @@ class baseball_model(torch.nn.Module):
             # else:
             #     print("Model does not outperform best perfroming previous. Not saved")
     
-    def train(self, epochs, learningRate, output, data):
+    def train(self, epochs, learningRate, data):
         print("Training")
         stats_dict = df_tensor_convert(data)
         y = stats_dict[:,0]
@@ -77,10 +79,8 @@ class baseball_model(torch.nn.Module):
             if torch.isnan(loss):
                 raise ValueError("NAN loss")
             # get gradients w.r.t to parameters
-            if self.loss == -1:
-                self.loss = loss.item()
-                self.best = self.state_dict()
-            elif self.loss > loss.item():
+            if self.loss > loss.item():
+                print("Updated")
                 self.loss = loss.item()
                 self.best = self.state_dict()
             loss.backward()
@@ -89,10 +89,12 @@ class baseball_model(torch.nn.Module):
             print(f'epoch {epoch + 1}, loss {loss.item()}')
         print(f'Minimum loss {self.loss}')
     
-    def predict(self, player_year:str):
+    def predict(self, player_year:str, mode:str):
        first, last, year = player_year.split(" ")        
-       link = f"http://localhost:8080/bat?Name={first}-{last}&Season={year}"
+       link = f"http://localhost:8080/{mode}?Name={first}-{last}&Season={year}"
        list_response = requests.get(link).json()
+       if list_response is None:
+           raise SearchError(f"Could not find player {first} {last}. Check for spelling and that the model is for pitching or batting\n{link}")
        keys = {y : x for x,y  in list(enumerate(self.stats))}
        valu = {x:list(y.values())[0] for x,y in list_response[0].items() if x in self.stats[:-1] and y['Valid']}
        tensor = Variable(torch.Tensor([i for _, i  in sorted(list(valu.items()), key= lambda x: keys[x[0]])]))

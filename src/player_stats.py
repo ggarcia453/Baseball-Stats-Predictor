@@ -35,13 +35,10 @@ def df_tensor_convert(data):
 def dataset_loader(args):
     download = True
     s = args.save_csv
-    match args.dataset.split("_")[0]:
-        case "batting":
-            path = "batting_data/" + args.dataset
-        case "pitching":
-            path = "pitching_data/" + args.dataset
-        case _:
-            raise ValidationError("Not valid Set")
+    if (args.mode in ["batting", "pitching"]):
+        path = f"{args.mode}_data/{args.mode}_data_{args.year_range}"
+    else:
+        raise ValidationError("Not valid Set")
     if args.from_csv:
         try:
             dataset = pandas.concat([chunk for chunk in tqdm.tqdm(pandas.read_csv(path + ".csv", chunksize=1000), desc='Loading data')])

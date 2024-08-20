@@ -107,8 +107,8 @@ func PitcherGetHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	http.HandleFunc("/bat", BatterGetHandler)
-	http.HandleFunc("/pitch", PitcherGetHandler)
+	http.HandleFunc("/batting", BatterGetHandler)
+	http.HandleFunc("/pitching", PitcherGetHandler)
 	// http.HandleFunc("/insert", POSTHandler)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

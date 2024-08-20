@@ -9,7 +9,8 @@ def grab_inputs(args):
 def main():
     parser = argparse.ArgumentParser(description='Main function for training baseball_models')
     data_pipeline = parser.add_argument_group('Input and Output Pipeline')
-    data_pipeline.add_argument('-d', '--dataset', default='batting_data_2000_2019', help='Dataset to use for training. Use format [batting|pitching]_data_[starting year]_[ending year]')
+    data_pipeline.add_argument('-m', '--mode', default='batting', help='Mode for use. Should be either \'batting\' or \'pitching\'')
+    data_pipeline.add_argument('-y', '--year_range', default='2000_2019', help='Year Range for use for traning')
     parser.add_argument('-l', '--learning_rate', default=0.00005, help="Base learning rate. (Will decrease in model to prevent exploding gradient)")
     parser.add_argument('-e', '--epochs', default=2500, help="Number of epochs for training")
     parser.add_argument('-c', '--from_csv', action='store_true', help='Load data from CSV instead of fangraphs website')
@@ -31,7 +32,7 @@ def main():
         if args.retrain:
             pass
         else:
-            model.predict(args.predict_player)
+            model.predict(args.predict_player, args.mode)
     else:
         print('Validating Input Output Args')
         #TODO Validate Input Output args
@@ -49,7 +50,7 @@ def main():
         count = 0
         while count < 10:
             try:
-                model.train(args.epochs, args.learning_rate, args.output_args, inputs)
+                model.train(args.epochs, args.learning_rate, inputs)
                 break
             except ValueError:
                 model = baseball_model(args)

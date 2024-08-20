@@ -25,7 +25,6 @@ For method 1, run
 For method 2 you will have to follow the setup guide linked to start the server then run the script. 
 
 # Future Plans
-1. Further refine API to allow for querys for batters
-2. Complete model evaluation and model prediction features.
-3. Begin working on pitcher database/api
-4. Continue tinkering model to minimize loss
+1. Investigate saving and load issues.
+2. Add more robust evaluation method.
+3. Improve model architecture. 
