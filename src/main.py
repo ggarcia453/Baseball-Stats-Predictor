@@ -27,12 +27,16 @@ def main():
         model = baseball_model(args)
         with open(f"{args.load_model}/best-loss.txt") as f:
             name = f.readlines()[1].strip()
-        model.load_state_dict(torch.load(f"{args.load_model}/{name}.pt"))
+        model.load_state_dict(torch.load(f"{args.load_model}/{name}.pt", weights_only=False))
         print(f"model at {args.load_model} loaded")
+        model.eval()
         if args.retrain:
             pass
         else:
-            model.predict(args.predict_player, args.mode)
+            data = model.data_fetch(args.predict_player, args.mode)
+            data = data.unsqueeze(0)
+            with torch.no_grad():
+                print(model(data)[0])
     else:
         print('Validating Input Output Args')
         #TODO Validate Input Output args
@@ -50,15 +54,17 @@ def main():
         count = 0
         while count < 10:
             try:
-                model.train(args.epochs, args.learning_rate, inputs)
+                model.train_model(args.epochs, args.learning_rate, inputs, 0.01)
+                if args.save_model:
+                    model.save(args.save_model)
                 break
             except ValueError:
-                model = baseball_model(args)
-                print("NAN loss. New model created")
                 count +=1
-        
-        if args.save_model:
-            model.save(args.save_model)
+                if count == 10:
+                    print("issues with creating model")
+                else:
+                    model = baseball_model(args)
+                    print("NAN loss. New model created")
     print("Completed")
 
 if __name__ == "__main__":

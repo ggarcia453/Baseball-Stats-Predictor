@@ -1,7 +1,7 @@
 #! /bin/bash
 PYTHONSRCPATH=src/main.py
 CSV=true
-EPOCH_NUM=250
+EPOCH_NUM=2500
 b_p=batting #should be either batting or pitching
 start_year=1945
 end_year=2023

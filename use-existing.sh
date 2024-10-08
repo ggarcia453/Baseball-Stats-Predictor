@@ -2,8 +2,8 @@
 PYTHONSRCPATH=src/main.py
 b_p=batting #should be either batting or pitching
 model_directory=models/AVG-HR-OPS-wOBA-wRC+-WAR
-name="Albert Pujols" #Leave Space between first and last name
-year=2011
+name="Barry Bonds" #Leave Space between first and last name
+year=2001
 TRAIN=false
 
 if [ ! -d "$model_directory" ]; then
