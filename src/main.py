@@ -35,6 +35,7 @@ def main():
         else:
             data = model.data_fetch(args.predict_player, args.mode)
             data = data.unsqueeze(0)
+            print(data)
             with torch.no_grad():
                 print(model(data)[0])
     else:
@@ -51,20 +52,9 @@ def main():
         if (model.dims == 1):
             raise RuntimeError("Model not initialzed correctly")
         print(f"Created {model}")
-        count = 0
-        while count < 10:
-            try:
-                model.train_model(args.epochs, args.learning_rate, inputs, 0.01)
-                if args.save_model:
-                    model.save(args.save_model)
-                break
-            except ValueError:
-                count +=1
-                if count == 10:
-                    print("issues with creating model")
-                else:
-                    model = baseball_model(args)
-                    print("NAN loss. New model created")
+        model.train_model(args.epochs, args.learning_rate, inputs, 0.01)
+        if args.save_model:
+            model.save(args.save_model)
     print("Completed")
 
 if __name__ == "__main__":
