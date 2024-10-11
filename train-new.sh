@@ -13,5 +13,5 @@ echo $b_p"_data_"$start_year"_"$end_year
 if [ "$CSV" = true ] ; then
     python3 $PYTHONSRCPATH -m  $b_p -y $start_year"_"$end_year -c -i AVG HR RAR OPS wRC+ -o WAR -e $EPOCH_NUM -sm $model_directory
 else
-   python3 $PYTHONSRCPATH -d $b_p"_data_"$start_year"_"$end_year -i  AVG HR RAR OPS wRC+ -o WAR -e $EPOCH_NUM -sm $model_directory 
+   python3 $PYTHONSRCPATH -m  $b_p -y $start_year"_"$end_year -i  AVG HR RAR OPS wRC+ -o WAR -e $EPOCH_NUM -sm $model_directory 
 fi

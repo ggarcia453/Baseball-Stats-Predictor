@@ -5,6 +5,8 @@ from copy import deepcopy
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, root_mean_squared_error
+import numpy as np
 
 
 class SearchError(Exception):
@@ -153,6 +155,54 @@ class baseball_model(torch.nn.Module):
         with torch.no_grad():
             normalized_output = self(input_data)
             return self.denormalize_output(normalized_output)
+    
+    def evaluation(self, data):
+        _, test_loader, (x_mean, x_std, y_mean, y_std) = self._prepare_data(df_tensor_convert(data))
+        self.set_normalization_params(y_mean, y_std)
+        self.eval()
+        all_predictions = []
+        all_targets = []
+
+        with torch.no_grad():
+            for inputs, targets in test_loader:
+                outputs = self(inputs)
+                all_predictions.extend(self.denormalize_output(outputs).numpy().flatten())
+                all_targets.extend(self.denormalize_output(targets).numpy().flatten())
+        all_predictions = np.array(all_predictions)
+        all_targets = np.array(all_targets)
+        mse = mean_squared_error(all_targets, all_predictions)
+        rmse = root_mean_squared_error(all_targets, all_predictions)
+        mae = mean_absolute_error(all_targets, all_predictions)
+        r2 = r2_score(all_targets, all_predictions)        
+        errors = all_predictions - all_targets
+        mean_error = np.mean(errors)
+        median_error = np.median(errors)
+        error_std = np.std(errors)
+        percentile_errors = np.percentile(np.abs(errors), [25, 50, 75, 90, 95])
+        print(f"Evaluation Results:")
+        print(f"Mean Squared Error (MSE): {mse:.4f}")
+        print(f"Root Mean Squared Error (RMSE): {rmse:.4f}")
+        print(f"Mean Absolute Error (MAE): {mae:.4f}")
+        print(f"R-squared (R2) Score: {r2:.4f}")
+        print(f"Mean Error: {mean_error:.4f}")
+        print(f"Median Error: {median_error:.4f}")
+        print(f"Standard Deviation of Error: {error_std:.4f}")
+        print(f"25th Percentile of Absolute Error: {percentile_errors[0]:.4f}")
+        print(f"50th Percentile (Median) of Absolute Error: {percentile_errors[1]:.4f}")
+        print(f"75th Percentile of Absolute Error: {percentile_errors[2]:.4f}")
+        print(f"90th Percentile of Absolute Error: {percentile_errors[3]:.4f}")
+        print(f"95th Percentile of Absolute Error: {percentile_errors[4]:.4f}")
+        return {
+            "mse": mse,
+            "rmse": rmse,
+            "mae": mae,
+            "r2": r2,
+            "mean_error": mean_error,
+            "median_error": median_error,
+            "error_std": error_std,
+            "percentile_errors": percentile_errors
+        }
+
     
     def __str__(self):
         return f"Baseball model with {self.dims - 1} input dimension"

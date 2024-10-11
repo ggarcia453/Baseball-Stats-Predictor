@@ -1,5 +1,5 @@
 from pybaseball import pitching_stats, batting_stats, playerid_lookup, cache
-import torch, pandas, numpy, tqdm
+import torch, pandas, tqdm
 
 cache.enable()
 
