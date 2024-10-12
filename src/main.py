@@ -19,6 +19,7 @@ def main():
     parser.add_argument('-sm', '--save_model', help="Save best performing model in directory")
     parser.add_argument('-pp', '--predict_player', help='After training or loading model, predict stat for certain player')
     parser.add_argument('-ev', '--eval', action='store_true', help='Only with loading model, Runs an evaluation of performance')
+    parser.add_argument('-ple', '--plot_eval', action='store_true', help='Plot evaluation Predictions')
     data_pipeline.add_argument('-o', '--output_args', default='WAR', help='Stat to be predicted')
     data_pipeline.add_argument('-i', '--input_args', nargs='+',default=['RAR'], help="Stats that are used for prediction")
     args = parser.parse_args()
@@ -35,8 +36,11 @@ def main():
             print("Validating Dataset")
             inputs = validate_dataset(args, dataset)
             if len(inputs) == 0:
-                raise RuntimeError("No Dataset points identified ")            
-            model.evaluation(inputs)
+                raise RuntimeError("No Dataset points identified ")      
+            if args.plot_eval:      
+                model.evaluation(inputs, args.plot_eval)
+            else:
+                model.evaluation(inputs)
         else:
             data = model.data_fetch(args.predict_player, args.mode)
             data = data.unsqueeze(0)

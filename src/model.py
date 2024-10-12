@@ -7,7 +7,7 @@ from torch.utils.data import DataLoader, TensorDataset
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, root_mean_squared_error
 import numpy as np
-
+import matplotlib.pyplot as plt
 
 class SearchError(Exception):
     pass
@@ -28,7 +28,7 @@ class baseball_model(torch.nn.Module):
             prev_size = hidden_size
         self.hidden_layers = torch.nn.Sequential(*layers)
         self.output = torch.nn.Linear(inputDim, 1)
-        self.activation = torch.nn.LeakyReLU()
+        self.activation = torch.nn.Linear(1,1)
         self.dims = inputDim + 1
         self.stats = args.input_args
         self.loss = float('inf')
@@ -156,8 +156,8 @@ class baseball_model(torch.nn.Module):
             normalized_output = self(input_data)
             return self.denormalize_output(normalized_output)
     
-    def evaluation(self, data):
-        _, test_loader, (x_mean, x_std, y_mean, y_std) = self._prepare_data(df_tensor_convert(data))
+    def evaluation(self, data, ple=False):
+        _, test_loader, (_,_, y_mean, y_std) = self._prepare_data(df_tensor_convert(data))
         self.set_normalization_params(y_mean, y_std)
         self.eval()
         all_predictions = []
@@ -192,6 +192,14 @@ class baseball_model(torch.nn.Module):
         print(f"75th Percentile of Absolute Error: {percentile_errors[2]:.4f}")
         print(f"90th Percentile of Absolute Error: {percentile_errors[3]:.4f}")
         print(f"95th Percentile of Absolute Error: {percentile_errors[4]:.4f}")
+        if ple:    
+            plt.figure(figsize=(10, 6))
+            plt.scatter(all_targets, all_predictions, alpha=0.5)
+            plt.plot([min(all_targets), max(all_targets)], [min(all_targets), max(all_targets)], 'r--', lw=2)
+            plt.xlabel("Actual Values")
+            plt.ylabel("Predicted Values")
+            plt.title("Actual vs Predicted Values")
+            plt.show()
         return {
             "mse": mse,
             "rmse": rmse,
