@@ -13,7 +13,7 @@ def main():
     data_pipeline.add_argument('-y', '--year_range', default='2000_2019', help='Year Range for use for traning')
     parser.add_argument('-l', '--learning_rate', default=0.00005, help="Base learning rate. (Will decrease in model to prevent exploding gradient)")
     parser.add_argument('-e', '--epochs', default=2500, help="Number of epochs for training")
-    parser.add_argument('-c', '--from_csv', action='store_true', help='Load data from CSV instead of fangraphs website')
+    parser.add_argument('-dm', '--data_mode', default="csv", help='Load data from CSV instead of fangraphs website')
     parser.add_argument('-sc', '--save_csv', action='store_true', help='Save data in csv file ')
     parser.add_argument('-lm', '--load_model', help='Load model from a model directory')
     parser.add_argument('-sm', '--save_model', help="Save best performing model in directory")
@@ -42,7 +42,7 @@ def main():
             else:
                 model.evaluation(inputs)
         else:
-            data = model.data_fetch(args.predict_player, args.mode)
+            data = model.data_fetch_player(args.predict_player, args.mode)
             data = data.unsqueeze(0)
             print(data)
             with torch.no_grad():

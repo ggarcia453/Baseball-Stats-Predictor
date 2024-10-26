@@ -80,7 +80,7 @@ class baseball_model(torch.nn.Module):
         y_std = y.std()
         y_normalized = (y - y_mean) / (y_std + 1e-8)
         x_train, x_val, y_train, y_val = train_test_split(x_normalized, y_normalized, test_size=0.2, random_state=42)
-        x_train_tensor = x_train.clone().detach().float()
+        x_train_tensor = x_train.clone().detach().float()   
         y_train_tensor = y_train.clone().detach().float()
         x_val_tensor = x_val.clone().detach().float()
         y_val_tensor = y_val.clone().detach().float()
@@ -124,7 +124,7 @@ class baseball_model(torch.nn.Module):
               f'Val Range: [{val_min_denorm:.4f}, {val_max_denorm:.4f}]')
         print(f'Minimum loss {self.loss}')
     
-    def data_fetch(self, player_year:str, mode:str):
+    def data_fetch_player(self, player_year:str, mode:str):
        first, last, year = player_year.split(" ")        
        link = f"http://localhost:8080/{mode}?Name={first}-{last}&Season={year}"
        list_response = requests.get(link).json()
@@ -143,7 +143,7 @@ class baseball_model(torch.nn.Module):
         with torch.no_grad():
             for data, target in val_loader:
                 output = self(data)
-                loss = criterion(output, target)
+                loss = criterion(output, target.view(-1,1))
                 total_loss += loss.item()
                 all_preds.extend(output.tolist())
         
@@ -167,7 +167,7 @@ class baseball_model(torch.nn.Module):
             for inputs, targets in test_loader:
                 outputs = self(inputs)
                 all_predictions.extend(self.denormalize_output(outputs).numpy().flatten())
-                all_targets.extend(self.denormalize_output(targets).numpy().flatten())
+                all_targets.extend(self.denormalize_output(targets.view(-1,1)).numpy().flatten())
         all_predictions = np.array(all_predictions)
         all_targets = np.array(all_targets)
         mse = mean_squared_error(all_targets, all_predictions)

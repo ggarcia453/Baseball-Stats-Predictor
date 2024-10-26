@@ -39,13 +39,21 @@ def dataset_loader(args):
         path = f"{args.mode}_data/{args.mode}_data_{args.year_range}"
     else:
         raise ValidationError("Not valid Set")
-    if args.from_csv:
-        try:
-            dataset = pandas.concat([chunk for chunk in tqdm.tqdm(pandas.read_csv(path + ".csv", chunksize=1000), desc='Loading data')])
-            download = False
-        except FileNotFoundError: 
-            print("No csv found in current directory\nDowlnloading and saving data from FanGraphs")
-            s = True
+    match (args.data_mode):
+        case "csv":
+            try:
+                dataset = pandas.concat([chunk for chunk in tqdm.tqdm(pandas.read_csv(path + ".csv", chunksize=1000), desc='Loading data')])
+                download = False
+            except FileNotFoundError: 
+                print("No csv found in current directory\nDowlnloading and saving data from FanGraphs")
+                s = True
+        case "pyb":
+            download = True
+        case "api":
+            print(args.year_range, args.mode)
+            raise ValidationError
+        case i :
+            print(i)    
     if download:
         dataset = get_dataset(args.dataset)
     print("Loaded")
@@ -56,3 +64,4 @@ def dataset_loader(args):
 
 def grabid(player):
     return playerid_lookup(*player)
+

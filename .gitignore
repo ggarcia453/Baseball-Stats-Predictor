@@ -10,5 +10,7 @@ models/
 
 .vscode/
 
+.idea/
+
 api/.env
 api/go.sum
