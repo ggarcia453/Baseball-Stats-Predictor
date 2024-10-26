@@ -3,7 +3,6 @@ package structs
 import "database/sql"
 
 type Batter struct {
-	IDfg                   sql.NullInt16   `json:"IDfg" db:"IDfg"`
 	Season                 sql.NullString  `json:"Season" db:"Season"`
 	Name                   sql.NullString  `json:"Name" db:"Name"`
 	Team                   sql.NullString  `json:"Team" db:"Team"`
