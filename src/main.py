@@ -1,6 +1,7 @@
 import argparse,sys, torch
 from model import baseball_model
 from player_stats import get_dataset, validate_dataset, dataset_loader
+import wandb
 
 def grab_inputs(args):
     args.input_args = "".join(args.load_model.split("/")[1:]).split("-")
@@ -20,6 +21,7 @@ def main():
     parser.add_argument('-pp', '--predict_player', help='After training or loading model, predict stat for certain player')
     parser.add_argument('-ev', '--eval', action='store_true', help='Only with loading model, Runs an evaluation of performance')
     parser.add_argument('-ple', '--plot_eval', action='store_true', help='Plot evaluation Predictions')
+    parser.add_argument('-w', '--use_wandb', action='store_true', help='Log With Wandb')
     data_pipeline.add_argument('-o', '--output_args', default='WAR', help='Stat to be predicted')
     data_pipeline.add_argument('-i', '--input_args', nargs='+',default=['RAR'], help="Stats that are used for prediction")
     args = parser.parse_args()
@@ -48,6 +50,19 @@ def main():
             with torch.no_grad():
                 print(model(data)[0])
     else:
+        if args.use_wandb:
+            wandb.init(
+                # set the wandb project where this run will be logged
+                project="Baseball-Project",
+                # track hyperparameters and run metadata
+                config={
+                "learning_rate": args.learning_rate,
+                "dataset": args.year_range,
+                "epochs": args.epochs,
+                "inputs": args.input_args,
+                "output" : args.output_args
+                }
+            )
         print('Validating Input Output Args')
         #TODO Validate Input Output args
         dataset = dataset_loader(args)   
@@ -64,6 +79,7 @@ def main():
         model.train_model(args.epochs, args.learning_rate, inputs, 0.01)
         if args.save_model:
             model.save(args.save_model)
+        wandb.finish()
     print("Completed")
 
 if __name__ == "__main__":

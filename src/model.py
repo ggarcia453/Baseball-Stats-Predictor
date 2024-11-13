@@ -8,6 +8,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, root_mean_squared_error
 import numpy as np
 import matplotlib.pyplot as plt
+import wandb
 
 class SearchError(Exception):
     pass
@@ -122,6 +123,10 @@ class baseball_model(torch.nn.Module):
             val_max_denorm = self.denormalize_output(torch.tensor(val_max)).item()
             print(f'Epoch {epoch + 1}, Train Loss: {avg_loss:.4f}, Val Loss: {val_loss:.4f}, '
               f'Val Range: [{val_min_denorm:.4f}, {val_max_denorm:.4f}]')
+            wandb.log({
+                "train_loss" : avg_loss,
+                "val_loss" : val_loss,
+            })
         print(f'Minimum loss {self.loss}')
     
     def data_fetch_player(self, player_year:str, mode:str):
