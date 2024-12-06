@@ -1,5 +1,5 @@
 from pybaseball import pitching_stats, batting_stats, playerid_lookup, cache
-import torch, pandas, tqdm
+import torch, pandas, tqdm, os
 
 cache.enable()
 
@@ -37,6 +37,7 @@ def dataset_loader(args):
     s = args.save_csv
     if (args.mode in ["batting", "pitching"]):
         path = f"{args.mode}_data/{args.mode}_data_{args.year_range}"
+        parentpath = f"{args.mode}_data/"
     else:
         raise ValidationError("Not valid Set")
     match (args.data_mode):
@@ -55,9 +56,11 @@ def dataset_loader(args):
         case i :
             print(i)    
     if download:
-        dataset = get_dataset(args.dataset)
+        dataset = get_dataset(f"{args.mode}_data_{args.year_range}")
     print("Loaded")
     if s:
+        if not os.path.isdir(parentpath):
+            os.makedirs(parentpath)
         dataset.to_csv(f"{path}.csv")
         print("saved to csv")
     return dataset

@@ -9,7 +9,7 @@ conda install pytorch torchvision -c pytorch
 git clone https://github.com/ggarcia453/Baseball-Stats-Predictor
 cd Baseball-Stats-Predictor/
 pip install -r requirements.txt
-./train-new.sh
+wandb login
 ```
 
 # Database Setup
