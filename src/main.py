@@ -12,7 +12,7 @@ def main():
     data_pipeline = parser.add_argument_group('Input and Output Pipeline')
     data_pipeline.add_argument('-m', '--mode', default='batting', help='Mode for use. Should be either \'batting\' or \'pitching\'')
     data_pipeline.add_argument('-y', '--year_range', default='2000_2019', help='Year Range for use for traning')
-    parser.add_argument('-l', '--learning_rate', default=0.00005, help="Base learning rate. (Will decrease in model to prevent exploding gradient)")
+    parser.add_argument('-l', '--learning_rate', default=0.005, help="Base learning rate. (Will decrease in model to prevent exploding gradient)")
     parser.add_argument('-e', '--epochs', default=2500, help="Number of epochs for training")
     parser.add_argument('-dm', '--data_mode', default="csv", help='Load data from CSV instead of fangraphs website')
     parser.add_argument('-sc', '--save_csv', action='store_true', help='Save data in csv file ')
@@ -40,9 +40,9 @@ def main():
             if len(inputs) == 0:
                 raise RuntimeError("No Dataset points identified ")      
             if args.plot_eval:      
-                model.evaluation(inputs, args.plot_eval)
+                model.evaluation(inputs, True, args.plot_eval)
             else:
-                model.evaluation(inputs)
+                model.evaluation(inputs, True)
         else:
             data = model.data_fetch_player(args.predict_player, args.mode)
             data = data.unsqueeze(0)
@@ -53,7 +53,7 @@ def main():
         if args.use_wandb:
             wandb.init(
                 # set the wandb project where this run will be logged
-                project="Baseball-Project",
+                project="Baseball-Stats-Predictor",
                 # track hyperparameters and run metadata
                 config={
                 "learning_rate": args.learning_rate,

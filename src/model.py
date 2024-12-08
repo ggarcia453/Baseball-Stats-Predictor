@@ -123,9 +123,12 @@ class baseball_model(torch.nn.Module):
             val_max_denorm = self.denormalize_output(torch.tensor(val_max)).item()
             print(f'Epoch {epoch + 1}, Train Loss: {avg_loss:.4f}, Val Loss: {val_loss:.4f}, '
               f'Val Range: [{val_min_denorm:.4f}, {val_max_denorm:.4f}]')
+            evalres = self.evaluation(data)
             wandb.log({
-                "train_loss" : avg_loss,
-                "val_loss" : val_loss,
+            "train_loss": avg_loss / len(train_loader),
+            "val_loss": val_loss,
+            "mse" : evalres["mse"], 
+            "r2" : evalres["r2"]
             })
         print(f'Minimum loss {self.loss}')
     
@@ -161,7 +164,7 @@ class baseball_model(torch.nn.Module):
             normalized_output = self(input_data)
             return self.denormalize_output(normalized_output)
     
-    def evaluation(self, data, ple=False):
+    def evaluation(self, data, print_res=False, ple=False):
         _, test_loader, (_,_, y_mean, y_std) = self._prepare_data(df_tensor_convert(data))
         self.set_normalization_params(y_mean, y_std)
         self.eval()
@@ -184,19 +187,20 @@ class baseball_model(torch.nn.Module):
         median_error = np.median(errors)
         error_std = np.std(errors)
         percentile_errors = np.percentile(np.abs(errors), [25, 50, 75, 90, 95])
-        print(f"Evaluation Results:")
-        print(f"Mean Squared Error (MSE): {mse:.4f}")
-        print(f"Root Mean Squared Error (RMSE): {rmse:.4f}")
-        print(f"Mean Absolute Error (MAE): {mae:.4f}")
-        print(f"R-squared (R2) Score: {r2:.4f}")
-        print(f"Mean Error: {mean_error:.4f}")
-        print(f"Median Error: {median_error:.4f}")
-        print(f"Standard Deviation of Error: {error_std:.4f}")
-        print(f"25th Percentile of Absolute Error: {percentile_errors[0]:.4f}")
-        print(f"50th Percentile (Median) of Absolute Error: {percentile_errors[1]:.4f}")
-        print(f"75th Percentile of Absolute Error: {percentile_errors[2]:.4f}")
-        print(f"90th Percentile of Absolute Error: {percentile_errors[3]:.4f}")
-        print(f"95th Percentile of Absolute Error: {percentile_errors[4]:.4f}")
+        if print_res:
+            print(f"Evaluation Results:")
+            print(f"Mean Squared Error (MSE): {mse:.4f}")
+            print(f"Root Mean Squared Error (RMSE): {rmse:.4f}")
+            print(f"Mean Absolute Error (MAE): {mae:.4f}")
+            print(f"R-squared (R2) Score: {r2:.4f}")
+            print(f"Mean Error: {mean_error:.4f}")
+            print(f"Median Error: {median_error:.4f}")
+            print(f"Standard Deviation of Error: {error_std:.4f}")
+            print(f"25th Percentile of Absolute Error: {percentile_errors[0]:.4f}")
+            print(f"50th Percentile (Median) of Absolute Error: {percentile_errors[1]:.4f}")
+            print(f"75th Percentile of Absolute Error: {percentile_errors[2]:.4f}")
+            print(f"90th Percentile of Absolute Error: {percentile_errors[3]:.4f}")
+            print(f"95th Percentile of Absolute Error: {percentile_errors[4]:.4f}")
         if ple:    
             plt.figure(figsize=(10, 6))
             plt.scatter(all_targets, all_predictions, alpha=0.5)
