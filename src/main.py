@@ -76,10 +76,9 @@ def main():
         if (model.dims == 1):
             raise RuntimeError("Model not initialzed correctly")
         print(f"Created {model}")
-        model.train_model(args.epochs, args.learning_rate, inputs, 0.01)
+        model.train_model(args.epochs, args.learning_rate, inputs, args.use_wandb, 0.01)
         if args.save_model:
             model.save(args.save_model)
-        wandb.finish()
     print("Completed")
 
 if __name__ == "__main__":

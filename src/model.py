@@ -91,7 +91,7 @@ class baseball_model(torch.nn.Module):
         val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
         return train_loader, val_loader, (x_mean, x_std, y_mean, y_std)
     
-    def train_model(self, epochs, learningRate, data, l2_lambda=0.0):
+    def train_model(self, epochs, learningRate, data, use_wandb, l2_lambda=0.0):
         train_loader, val_loader, (x_mean, x_std, y_mean, y_std) = self._prepare_data(df_tensor_convert(data))
         self.set_normalization_params(y_mean, y_std)
         criterion = torch.nn.MSELoss() 
@@ -124,12 +124,13 @@ class baseball_model(torch.nn.Module):
             print(f'Epoch {epoch + 1}, Train Loss: {avg_loss:.4f}, Val Loss: {val_loss:.4f}, '
               f'Val Range: [{val_min_denorm:.4f}, {val_max_denorm:.4f}]')
             evalres = self.evaluation(data)
-            wandb.log({
-            "train_loss": avg_loss / len(train_loader),
-            "val_loss": val_loss,
-            "mse" : evalres["mse"], 
-            "r2" : evalres["r2"]
-            })
+            if use_wandb:
+                wandb.log({
+                "train_loss": avg_loss / len(train_loader),
+                "val_loss": val_loss,
+                "mse" : evalres["mse"], 
+                "r2" : evalres["r2"]
+                })
         print(f'Minimum loss {self.loss}')
     
     def data_fetch_player(self, player_year:str, mode:str):
