@@ -2,7 +2,6 @@
 PYTHONSRCPATH=src/main.py
 b_p=batting #should be either batting or pitching
 model_directory=models/AVG-HR-OPS-RAR-wRC+-WAR
-EVAL=false
 ## For evaluation purposes
 b_p=batting #should be either batting or pitching
 start_year=1940

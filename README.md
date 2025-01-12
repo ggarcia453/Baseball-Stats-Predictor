@@ -24,7 +24,44 @@ For method 1, run
 
 For method 2 you will have to follow the setup guide linked to start the server then run the script. 
 
+# Script Overview
+This section gives a brief overview of the variosu shell scripts included in this repository.
+
+## Train New
+This script will create a new machine learning model. The Bash variables are explained below. 
+
+| Variable    | Explaination |
+| -------- | ------- |
+| PYTHONSRCPATH | Path to main python driver file.   |
+| EPOCHNUM | Number of epochs to use. |
+| b_p | Sets mode to either batting or pitching. | 
+| start_year | Sets the start year for stats that are considered for training the model. | 
+| end_year | Sets the end year for stats that are considered for training the model. | 
+| model_dicretory| Sets the directory where the model is saved. |
+| data_mode | Sets the method for obtaining data. |
+| use_wandb | Determines if stats are logged to wandb. | 
+
+## Eval Model
+This script will evaluate the model. If a directory with multiple models is provided, it will grab the best performing as determined by loss. The Bash variables are explained below. 
+| Variable    | Explaination |
+| -------- | ------- |
+| PYTHONSRCPATH | Path to main python driver file.   |
+| b_p | Sets mode to either batting or pitching. MUST BE SET TO APPROPIATE MODE FOR TRAINING TO OBTAIN RIGHT DATA. | 
+| start_year | Sets the start year for stats that are considered for evaluating the model. | 
+| end_year | Sets the end year for stats that are considered for evaluating the model. | 
+| model_dicretory| The directory from where the model is loaded from. |
+
+## Predict Player
+This script will take a model and a player's stats then predict the final stat. 
+
+| Variable    | Explaination |
+| -------- | ------- |
+| PYTHONSRCPATH | Path to main python driver file.   |
+| b_p | Sets mode to either batting or pitching. MUST BE SET TO APPROPIATE MODE FOR TRAINING TO OBTAIN RIGHT DATA. | 
+| model_dicretory| The directory from where the model is loaded from. |
+| name | Name for player. Seperate first and last name with space. |
+| year | Year for predictions. |
+
 # Future Plans
-1. Investigate saving and load issues.
-2. Add more robust evaluation method.
-3. Improve model architecture. 
+1. Improve Model Architecture
+2. Scrape More websites for data
