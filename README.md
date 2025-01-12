@@ -62,6 +62,10 @@ This script will take a model and a player's stats then predict the final stat.
 | name | Name for player. Seperate first and last name with space. |
 | year | Year for predictions. |
 
+# Wandb Reports
+Here is an archive of basic wandb reports of models I have created. \
+[Dec. 7, 2024](https://api.wandb.ai/links/gegarci1/w64wg81f)
+
 # Future Plans
 1. Improve Model Architecture
 2. Scrape More websites for data
