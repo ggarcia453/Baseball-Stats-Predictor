@@ -1,6 +1,10 @@
 # Overview
 This a baseball statistics prediction model created by me. There is the core source file for model creation in the ```src/``` folder. There is also an api and sql files in the ```api``` folder. The reason for the api and database creation is to add more training data not found in the pybaseball csvs and make the querying for single player prediction easier. 
 
+# Project Structure
+- src/: The src folder contains the python source files for model creation and training.
+- api/: The spi folder contains the go and sql files for the API. 
+
 # Model Creation Steps
 ```bash
 conda create -n statsmodel 
@@ -15,7 +19,7 @@ wandb login
 # Database Setup
 Install postgres via one of two methods
 1. [Official download/Package Managers](https://www.postgresql.org/download/)
-2. [Installaiation via downloading files without package manager](https://gist.github.com/yunpengn/832aceac6998e2f894e5780229920cb5)
+2. [Installation via downloading files without package manager](https://gist.github.com/yunpengn/832aceac6998e2f894e5780229920cb5)
 
 For method 1, run 
 ```bash
@@ -67,5 +71,6 @@ Here is an archive of basic wandb reports of models I have created. \
 [Dec. 7, 2024](https://api.wandb.ai/links/gegarci1/w64wg81f)
 
 # Future Plans
-1. Improve Model Architecture
-2. Scrape More websites for data
+1. Enhance model architecture for better accuracy.
+2. Integrate data from additional sources via web scraping.
+3. Expand API capabilities for greater flexibility.
