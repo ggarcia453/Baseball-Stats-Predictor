@@ -1,5 +1,5 @@
 #! /bin/bash
-PYTHONSRCPATH=src/main.py
+PYTHONSRCPATH=../src/main.py
 EPOCH_NUM=1000
 b_p=pitching #should be either batting or pitching
 start_year=2015
