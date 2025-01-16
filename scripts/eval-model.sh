@@ -1,5 +1,5 @@
 #! /bin/bash
-PYTHONSRCPATH=../src/main.py
+PYTHONSRCPATH=src/main.py
 b_p=batting #should be either batting or pitching
 model_directory=models/AVG-HR-OPS-RAR-wRC+-WAR
 ## For evaluation purposes

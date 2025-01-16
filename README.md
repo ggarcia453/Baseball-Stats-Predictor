@@ -23,7 +23,7 @@ Install postgres via one of two methods
 
 For method 1, run 
 ```bash
-./postgres_setup.sh
+./scripts/postgres_setup.sh
 ```
 
 For method 2 you will have to follow the setup guide linked to start the server then run the script. 
@@ -65,6 +65,15 @@ This script will take a model and a player's stats then predict the final stat.
 | model_dicretory| The directory from where the model is loaded from. |
 | name | Name for player. Seperate first and last name with space. |
 | year | Year for predictions. |
+
+## How to use scripts
+These scripts are intended to be run from the root project directory. This means that you should run it as follows:
+```bash
+bash scripts/train-new.sh
+# or 
+./scripts/train-new.sh
+```
+Train new should be run before ``` predict-player.sh``` and ```eval-model.sh```.
 
 # Wandb Reports
 Here is an archive of basic wandb reports of models I have created. \
