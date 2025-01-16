@@ -1,38 +1,55 @@
+"""
+Python Module for various statistics loading.
+"""
+import os
 from pybaseball import pitching_stats, batting_stats, playerid_lookup, cache
-import torch, pandas, tqdm, os
+import torch
+import tqdm
+import pandas
 
 cache.enable()
 
 class ValidationError(Exception):
-    pass
+    """
+    Class for Validation Errors. To be used when dataset is not valid.
+    """
 
-def get_dataset(dataset):
+def get_dataset(dataset:str):
+    """
+    Takes in a dataset string and returns the stat set as requested. 
+    """
     x = dataset.split("_")
     p_b, _, start, end  = x
     if p_b == "pitching":
         return pitching_stats(start, end)
-    elif p_b == "batting":
+    if p_b == "batting":
         return batting_stats(start, end)
-    else:
-        raise ValueError("Not valid stat set")
-    
+    raise ValueError("Not valid stat set")
+
 
 def validate_dataset(args, dataset):
-    assert type(dataset) == pandas.DataFrame, f'Should be Pandas Dataframe'
+    """
+    Tests that dataset is valid before returning it. 
+    """
+    assert isinstance(dataset, pandas.DataFrame), 'Should be Pandas Dataframe'
     dataset = dataset[args.input_args]
     try:
         assert (dataset.columns.values[0] == args.output_args), "Something is wrong with dataset"
-    except AssertionError: 
+    except AssertionError:
         dataset.insert(0, args.output_args, dataset.pop(args.output_args))
     return dataset
-    
-    
+
+
 def df_tensor_convert(data):
+    """
+    Helper function to convert data into torch tensor of floats. 
+    """
     return torch.from_numpy(data.values).float()
 
 
 
 def dataset_loader(args):
+    """Load dataset from csv, pybaseball or api as requested"""
     download = True
     s = args.save_csv
     if (args.mode in ["batting", "pitching"]):
@@ -43,10 +60,12 @@ def dataset_loader(args):
     match (args.data_mode):
         case "csv":
             try:
-                dataset = pandas.concat([chunk for chunk in tqdm.tqdm(pandas.read_csv(path + ".csv", chunksize=1000), desc='Loading data')])
+                dataset = pandas.concat([chunk for chunk in
+                    tqdm.tqdm(pandas.read_csv(path + ".csv", chunksize=1000), desc='Loading data')])
                 download = False
-            except FileNotFoundError: 
-                print("No csv found in current directory\nDowlnloading and saving data from FanGraphs")
+            except FileNotFoundError:
+                print("No csv found in current directory\n"
+                      +"Dowlnloading and saving data from FanGraphs")
                 s = True
         case "pyb":
             download = True
@@ -54,7 +73,7 @@ def dataset_loader(args):
             print(args.year_range, args.mode)
             raise ValidationError
         case i :
-            print(i)    
+            print(i)
     if download:
         dataset = get_dataset(f"{args.mode}_data_{args.year_range}")
     print("Loaded")
@@ -66,5 +85,7 @@ def dataset_loader(args):
     return dataset
 
 def grabid(player):
+    """
+    Takes player string and returns associated pybaseball id. 
+    """
     return playerid_lookup(*player)
-
