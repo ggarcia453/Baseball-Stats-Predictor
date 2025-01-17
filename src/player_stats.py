@@ -2,6 +2,7 @@
 Python Module for various statistics loading.
 """
 import os
+import requests
 from pybaseball import pitching_stats, batting_stats, playerid_lookup, cache
 import torch
 import tqdm
@@ -71,9 +72,28 @@ def dataset_loader(args):
             download = True
         case "api":
             print(args.year_range, args.mode)
-            raise ValidationError
-        case i :
+            y1, y2 = args.year_range.split("_")
+            link = f"http://localhost:8080/{args.mode}?&Season={y1}&Season={y2}"
+            list_response = requests.get(link, timeout=10).json()
+            if list_response is None:
+                print("Could not access data")
+                download = True
+            else:
+                all_keys = {key for entry in list_response for key in entry.keys()}
+                filtered_data = []
+                for entry in list_response:
+                    processed_entry = {}
+                    for key in all_keys:
+                        if key in entry and entry[key]["Valid"]:
+                            processed_entry[key] = entry[key][next(iter(entry[key]))]
+                        else:
+                            processed_entry[key] = None
+                    filtered_data.append(processed_entry)
+                dataset = pandas.DataFrame(filtered_data)
+                download = False
+        case i:
             print(i)
+            download = True
     if download:
         dataset = get_dataset(f"{args.mode}_data_{args.year_range}")
     print("Loaded")
