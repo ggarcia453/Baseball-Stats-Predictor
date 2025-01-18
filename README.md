@@ -3,6 +3,7 @@ This a baseball statistics prediction model created by me. There is the core sou
 
 # Project Structure
 - src/: The src folder contains the python source files for model creation and training.
+- scripts/: The scripts folder contains the bash script files that can be used for training and evluating models. 
 - api/: The spi folder contains the go and sql files for the API. 
 
 # Model Creation Steps
