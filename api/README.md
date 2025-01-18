@@ -43,7 +43,7 @@ This section details how to use the API and what can be expected when running th
 
 The access point for this endpoint is /batting. 
 The query parameters are as folows:
-- team: Filter by team name ()
+- team: Filter by team name (use three letter code found in [code table](#code-table))
 - name: Filter by player name (use hyphen for spaces)
 - season: Filter by specific season(s)
     - Single season: ?season=2023
@@ -54,11 +54,68 @@ The query parameters are as folows:
 The query parameters are as follows:
 
 Query Parameters:
-- team: Filter by team name ()
+- team: Filter by team name (use three letter code found in [code table](#code-table))
 - name: Filter by player name (use hyphen for spaces)
+  - example: "Barry Bonds" -> "Barry-Bonds"
 - season: Filter by specific season(s)
   - Single season: ?season=2023
   - Range of seasons: ?season=2020&season=2023 (returns 2020-2023)
 
 
 ## Code Table
+| Code | Team                          | Division                  |
+|------|-------------------------------|---------------------------|
+| BAL  | Baltimore Orioles             | AL East                   |
+| BOS  | Boston Red Sox                | AL East                   |
+| NYY  | New York Yankees              | AL East                   |
+| TBR  | Tampa Bay Rays                | AL East                   |
+| TOR  | Toronto Blue Jays             | AL East                   |
+| CLE  | Cleveland Guardians           | AL Central                |
+| DET  | Detroit Tigers                | AL Central                |
+| KCR  | Kansas City Royals            | AL Central                |
+| MIN  | Minnesota Twins               | AL Central                |
+| CHW  | Chicago White Sox             | AL Central                |
+| HOU  | Houston Astros                | AL West                   |
+| LAA  | Los Angeles Angels            | AL West                   |
+| ANA  | Anaheim Angels                | AL West                   |
+| CAL  | California Angels             | AL West                   |
+| OAK  | Oakland Athletics             | AL West                   |
+| SEA  | Seattle Mariners              | AL West                   |
+| TEX  | Texas Rangers                 | AL West                   |
+| ATL  | Atlanta Braves                | NL East                   |
+| MIA  | Miami Marlins                 | NL East                   |
+| NYM  | New York Mets                 | NL East                   |
+| PHI  | Philadelphia Phillies         | NL East                   |
+| WSN  | Washington Nationals          | NL East                   |
+| CHC  | Chicago Cubs                  | NL Central                |
+| CIN  | Cincinnati Reds               | NL Central                |
+| MIL  | Milwaukee Brewers             | NL Central                |
+| PIT  | Pittsburgh Pirates            | NL Central                |
+| STL  | St. Louis Cardinals           | NL Central                |
+| ARI  | Arizona Diamondbacks          | NL West                   |
+| COL  | Colorado Rockies              | NL West                   |
+| LAD  | Los Angeles Dodgers           | NL West                   |
+| SDP  | San Diego Padres              | NL West                   |
+| SFG  | San Francisco Giants          | NL West                   |
+| BEG  | Birmingham Black Barons       | Negro Leagues             |
+| BBB  | Baltimore Black Barons        | Negro Leagues             |
+| CAG  | Chicago American Giants       | Negro Leagues             |
+| CBE  | Cuban Giants                  | Negro Leagues             |
+| CBR  | Cuban Stars (West)            | Negro Leagues             |
+| CCB  | Cleveland Buckeyes            | Negro Leagues             |
+| CC   | Cleveland Cubs                | Negro Leagues             |
+| CIC  | Cincinnati Clowns             | Negro Leagues             |
+| FLA  | Florida Cuban Giants          | Negro Leagues             |
+| HG   | Harrisburg Giants             | Negro Leagues             |
+| HSS  | Hilldale Club                 | Negro Leagues             |
+| IC   | Indianapolis Clowns           | Negro Leagues             |
+| JRC  | Jacksonville Red Caps         | Negro Leagues             |
+| KCM  | Kansas City Monarchs          | Negro Leagues             |
+| MRS  | Memphis Red Sox               | Negro Leagues             |
+| NE   | Newark Eagles                 | Negro Leagues             |
+| NBY  | New York Black Yankees        | Negro Leagues             |
+| NYC  | New York Cubans               | Negro Leagues             |
+| PHA  | Philadelphia Stars            | Negro Leagues             |
+| PS   | Pittsburgh Crawfords          | Negro Leagues             |
+| SNS  | St. Louis Stars               | Negro Leagues             |
+| TIC  | Toledo Crawfords              | Negro Leagues             |
