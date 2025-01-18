@@ -75,7 +75,7 @@ Query Parameters:
 | KCR  | Kansas City Royals            | AL Central                |
 | MIN  | Minnesota Twins               | AL Central                |
 | CHW  | Chicago White Sox             | AL Central                |
-| HOU  | Houston Astros                | AL West                   |
+| HOU  | Houston Astros                | AL West/NL Central        |
 | LAA  | Los Angeles Angels            | AL West                   |
 | ANA  | Anaheim Angels                | AL West                   |
 | CAL  | California Angels             | AL West                   |
@@ -87,6 +87,7 @@ Query Parameters:
 | NYM  | New York Mets                 | NL East                   |
 | PHI  | Philadelphia Phillies         | NL East                   |
 | WSN  | Washington Nationals          | NL East                   |
+| MON  | Montreal Expos                | NL East                   |
 | CHC  | Chicago Cubs                  | NL Central                |
 | CIN  | Cincinnati Reds               | NL Central                |
 | MIL  | Milwaukee Brewers             | NL Central                |
