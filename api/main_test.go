@@ -36,7 +36,7 @@ func Test_qstringBuilder(t *testing.T) {
 					"Team": []string{"NYY"},
 				},
 			},
-			want: baseQuery + " WHERE \"Team\" LIKE 'NYY' ;",
+			want: baseQuery + " WHERE \"Team\" LIKE 'NYY';",
 		},
 		{
 			name: "single WHERE condition (Name)",
@@ -46,7 +46,59 @@ func Test_qstringBuilder(t *testing.T) {
 					"Name": []string{"Barry-Bonds"},
 				},
 			},
-			want: baseQuery + " WHERE \"Name\" LIKE 'Barry Bonds' ;",
+			want: baseQuery + " WHERE \"Name\" LIKE 'Barry Bonds';",
+		},
+		{
+			name: "single WHERE condition (Single Season)",
+			args: args{
+				startingString: baseQuery,
+				values: url.Values{
+					"Season": []string{"2002"},
+				},
+			},
+			want: baseQuery + " WHERE \"Season\" = 2002;",
+		},
+		{
+			name: "Multiple WHERE condition (Season Range) 1",
+			args: args{
+				startingString: baseQuery,
+				values: url.Values{
+					"Season": []string{"2002", "2020"},
+				},
+			},
+			want: baseQuery + " WHERE \"Season\" >= 2002 AND \"Season\" <= 2020;",
+		},
+		{
+			name: "Multiple WHERE condition (Season Range) 2",
+			args: args{
+				startingString: baseQuery,
+				values: url.Values{
+					"Season": []string{"2014", "2000"},
+				},
+			},
+			want: baseQuery + " WHERE \"Season\" >= 2000 AND \"Season\" <= 2014;",
+		},
+		{
+			name: "Multiple WHERE condition (Team + Season)",
+			args: args{
+				startingString: baseQuery,
+				values: url.Values{
+					"Team":   []string{"NYY"},
+					"Season": []string{"2002"},
+				},
+			},
+			want: baseQuery + " WHERE \"Season\" = 2002 AND \"Team\" LIKE 'NYY';",
+		},
+		{
+			name: "Multiple WHERE condition (Name + Season)",
+			args: args{
+				startingString: baseQuery,
+				values: url.Values{
+					"Season": []string{"2021"},
+					"Name":   []string{"Max-Scherzer"},
+				},
+			},
+			want: baseQuery + " WHERE \"Name\" LIKE 'Max Scherzer' AND \"Season\" = 2021;",
 		},
 	}
 	for _, tt := range tests {

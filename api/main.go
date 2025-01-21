@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"os"
 	"slices"
+	"sort"
 	"strings"
 
 	"github.com/jmoiron/sqlx"
@@ -17,30 +18,40 @@ import (
 )
 
 func qstringBuilder(startingString string, values url.Values) string {
+	if len(values) == 0 {
+		return startingString + " LIMIT 2;"
+	}
 	textCategories := []string{"team", "name"}
-	if len(values) != 0 {
-		startingString = startingString + " WHERE "
-		for k, v := range values {
-			comparator := strings.ToLower(k)
-			if slices.Contains(textCategories, comparator) {
-				startingString = startingString + fmt.Sprintf("\"%s\" LIKE '%s' AND ", k, strings.Join(strings.Split(v[0], "-"), " "))
-			} else {
-				if len(v) > 1 {
-					firstyear := slices.Min(v)
-					lastyear := slices.Max(v)
-					startingString = startingString + fmt.Sprintf("\"%s\" >= %s AND \"%s\" <= %s AND", k, firstyear, k, lastyear)
 
-				} else {
-					startingString = startingString + fmt.Sprintf("\"%s\" = %s AND ", k, v[0])
-				}
+	keys := make([]string, 0, len(values))
+	for k := range values {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	conditions := make([]string, 0, len(values))
+	for _, k := range keys {
+		v := values[k]
+		comparator := strings.ToLower(k)
+		if slices.Contains(textCategories, comparator) {
+			condition := fmt.Sprintf("\"%s\" LIKE '%s'",
+				k,
+				strings.Join(strings.Split(v[0], "-"), " "))
+			conditions = append(conditions, condition)
+		} else {
+			if len(v) > 1 {
+				firstYear := slices.Min(v)
+				lastYear := slices.Max(v)
+				condition := fmt.Sprintf("\"%s\" >= %s AND \"%s\" <= %s",
+					k, firstYear, k, lastYear)
+				conditions = append(conditions, condition)
+			} else {
+				condition := fmt.Sprintf("\"%s\" = %s", k, v[0])
+				conditions = append(conditions, condition)
 			}
 		}
-		var last = len(strings.Split(startingString, "AND")) - 1
-		startingString = strings.Join(strings.Split(startingString, "AND")[:last], "AND") + ";"
-	} else {
-		startingString = startingString + " LIMIT 2;"
 	}
-	return startingString
+	return startingString + " WHERE " + strings.Join(conditions, " AND ") + ";"
 }
 
 func OpenConnection() *sqlx.DB {
