@@ -36,11 +36,9 @@ def main(args: argparse.Namespace):
     db_port = '5432'
     database_url = f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
     engine = create_engine(database_url, echo=False)
-    columns = df.columns.tolist()
-    PLACEHOLDERS = ','.join(['%s'] * len(columns))
-    COLUMNNAMES = ','.join(f'"{col}"' for col in columns)
-    insert_query = f"INSERT INTO my_table (\"{'\", \"'.join(columns)}\") VALUES ({', '.join(['%s'] * len(columns))})"
     try:
+        #Prepare Data 
+        
         df = df.where(pd.notna(df), None)
         metadata = MetaData()
         table = Table(f"{args.mode}_data", metadata, autoload_with=engine)
