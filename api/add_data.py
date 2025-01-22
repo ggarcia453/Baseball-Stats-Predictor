@@ -37,13 +37,11 @@ def main(args: argparse.Namespace):
 
         #Prepare Data 
         df = df.where(pd.notna(df), None)
-        metadata = MetaData()
-        table = Table(f"{args.mode}_data", metadata, autoload_with=engine)
         records = df.to_dict(orient='records')
         if records:
             with engine.begin() as connection:
-                # Insert data using SQLAlchemy
-                connection.execute(table.insert(), records)
+                # Insert data with Pandas
+                df.to_sql(f"{args.mode}_data", con=engine, if_exists='append', index=False)
                 print(f"Successfully inserted {len(records)} rows for {args.year}")
         else:
             print("No records to insert")
