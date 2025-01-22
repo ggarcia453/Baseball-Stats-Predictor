@@ -54,10 +54,10 @@ func qstringBuilder(startingString string, values url.Values) string {
 	return startingString + " WHERE " + strings.Join(conditions, " AND ") + ";"
 }
 
-func OpenConnection() *sqlx.DB {
+func OpenConnection() (*sqlx.DB, error) {
 	err := godotenv.Load()
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("error loading environment variables: %w", err)
 	}
 	user := os.Getenv("user")
 	password := os.Getenv("password")
@@ -66,25 +66,28 @@ func OpenConnection() *sqlx.DB {
 		user, password, dbname)
 	db, err := sqlx.Open("postgres", psqlInfo)
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("error opening DB connection: %w", err)
 	}
 
 	err = db.Ping()
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("error pinging DB: %w", err)
 	}
 
-	return db
+	return db, nil
 }
 
 func BatterGetHandler(w http.ResponseWriter, r *http.Request) {
-	db := OpenConnection()
+	db, err := OpenConnection()
+	if err != nil {
+		panic(err)
+	}
 	defer db.Close()
 	var batters []structs.Batter
 	var qstring = "SELECT \"Season\", \"Name\", \"Team\", \"Age\", \"G\", \"AB\", \"PA\", \"H\", \"1B\", \"2B\", \"3B\", \"HR\", \"R\", \"RBI\", \"BB\", \"IBB\", \"SO\", \"HBP\", \"SF\", \"SH\", \"GDP\", \"SB\", \"CS\", \"AVG\", \"GB\", \"FB\", \"LD\", \"IFFB\", \"Pitches\", \"Balls\", \"Strikes\", \"IFH\", \"BU\", \"BUH\", \"BB%\", \"K%\", \"BB/K\", \"OBP\", \"SLG\", \"OPS\", \"ISO\", \"BABIP\", \"GB/FB\", \"LD%\", \"GB%\", \"FB%\", \"IFFB%\", \"HR/FB\", \"IFH%\", \"BUH%\", \"wOBA\", \"wRAA\", \"wRC\", \"Bat\", \"Fld\", \"Rep\", \"Pos\", \"RAR\", \"WAR\", \"Dol\", \"Spd\", \"wRC+\", \"WPA\", \"RE24\", \"REW\", \"pLI\", \"phLI\", \"WPA/LI\", \"Clutch\", \"EV\", \"LA\", \"Barrels\", \"Barrel%\", \"maxEV\", \"HardHit\", \"HardHit%\", \"CStr%\", \"CSW%\", \"xBA\", \"xSLG\", \"xwOBA\" FROM batting_data"
 	values := r.URL.Query()
 	qstring = qstringBuilder(qstring, values)
-	err := db.Select(&batters, qstring)
+	err = db.Select(&batters, qstring)
 
 	if err != nil {
 		panic(err)
@@ -98,7 +101,10 @@ func BatterGetHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func PitcherGetHandler(w http.ResponseWriter, r *http.Request) {
-	db := OpenConnection()
+	db, err := OpenConnection()
+	if err != nil {
+		panic(err)
+	}
 	defer db.Close()
 	var pitchers []structs.Pitcher
 
@@ -106,7 +112,7 @@ func PitcherGetHandler(w http.ResponseWriter, r *http.Request) {
 	values := r.URL.Query()
 	qstring = qstringBuilder(qstring, values)
 
-	err := db.Select(&pitchers, qstring)
+	err = db.Select(&pitchers, qstring)
 	if err != nil {
 		panic(err)
 	}

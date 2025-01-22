@@ -5,7 +5,6 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
 
@@ -100,27 +99,22 @@ func Test_qstringBuilder(t *testing.T) {
 			},
 			want: baseQuery + " WHERE \"Name\" LIKE 'Max Scherzer' AND \"Season\" = 2021;",
 		},
+		{
+			name: "Multiple WHERE condition (Team + Season)",
+			args: args{
+				startingString: baseQuery,
+				values: url.Values{
+					"Season": []string{"2009"},
+					"Team":   []string{"LAD"},
+				},
+			},
+			want: baseQuery + " WHERE \"Season\" = 2009 AND \"Team\" LIKE 'LAD';",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := qstringBuilder(tt.args.startingString, tt.args.values); got != tt.want {
 				t.Errorf("qstringBuilder() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestOpenConnection(t *testing.T) {
-	tests := []struct {
-		name string
-		want *sqlx.DB
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := OpenConnection(); got != tt.want {
-				t.Errorf("OpenConnection() = %v, want %v", got, tt.want)
 			}
 		})
 	}
