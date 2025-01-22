@@ -3,12 +3,9 @@ Python Module for adding data to the postgres database.
 """
 import os
 import argparse
-from math import isnan
 from pybaseball import batting_stats, pitching_stats
 import pandas as pd
-import sqlalchemy as sa
 from sqlalchemy import create_engine, Table, MetaData
-import psycopg2
 from dotenv import load_dotenv
 
 def main(args: argparse.Namespace):
@@ -37,8 +34,8 @@ def main(args: argparse.Namespace):
     database_url = f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
     engine = create_engine(database_url, echo=False)
     try:
+
         #Prepare Data 
-        
         df = df.where(pd.notna(df), None)
         metadata = MetaData()
         table = Table(f"{args.mode}_data", metadata, autoload_with=engine)

@@ -3,3 +3,5 @@ pandas==2.2.2
 pybaseball
 wandb
 scikit-learn
+python-dotenv
+sqlalchemy 
