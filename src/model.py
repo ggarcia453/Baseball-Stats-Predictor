@@ -157,7 +157,8 @@ class BaseballModel(torch.nn.Module):
                 "train_loss": avg_loss / len(train_loader),
                 "val_loss": val_loss,
                 "mse" : evalres["mse"], 
-                "r2" : evalres["r2"]
+                "r2" : evalres["r2"], 
+                "adjusted r2" : evalres["adjusted_r2"]
                 })
         print(f'Minimum loss {self.loss}')
 
@@ -216,8 +217,11 @@ class BaseballModel(torch.nn.Module):
         with torch.no_grad():
             for inputs, targets in test_loader:
                 outputs = self(inputs)
-                all_predictions.extend(self.denormalize_output(outputs).numpy().flatten())
-                all_targets.extend(self.denormalize_output(targets.view(-1,1)).numpy().flatten())
+                pred_values = self.denormalize_output(outputs).numpy().flatten()
+                target_values = self.denormalize_output(targets.view(-1,1)).numpy().flatten()
+                valid_indices = ~(np.isnan(pred_values) | np.isnan(target_values))
+                all_predictions.extend(pred_values[valid_indices])
+                all_targets.extend(target_values[valid_indices])
         all_predictions = np.array(all_predictions)
         all_targets = np.array(all_targets)
         mse = mean_squared_error(all_targets, all_predictions)
@@ -257,6 +261,7 @@ class BaseballModel(torch.nn.Module):
             "rmse": rmse,
             "mae": mae,
             "r2": r2,
+            "adjusted_r2": 1 - (1 - r2) * (len(all_predictions)  - 1)/(len(all_predictions - (self.dims - 1) - 1)),
             "mean_error": mean_error,
             "median_error": median_error,
             "error_std": error_std,

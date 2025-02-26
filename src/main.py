@@ -41,7 +41,7 @@ def main():
     parser.add_argument('-l', '--learning_rate', default=0.005,
         help="Base learning rate. (Will decrease in model to prevent exploding gradient)")
     parser.add_argument('-e', '--epochs', default=2500, help="Number of epochs for training")
-    parser.add_argument('-dm', '--data_mode', default="csv",
+    parser.add_argument('-dm', '--data_mode', default="api",
         help='Load data from CSV instead of fangraphs website')
     parser.add_argument('-sc', '--save_csv', action='store_true', help='Save data in csv file ')
     parser.add_argument('-lm', '--load_model', help='Load model from a model directory')
