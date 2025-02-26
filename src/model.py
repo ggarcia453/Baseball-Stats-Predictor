@@ -36,14 +36,13 @@ class BaseballModel(torch.nn.Module):
         prev_size = input_dim
         for _, hidden_size in enumerate(sizes):
             layers.append(torch.nn.Linear(prev_size, hidden_size))
-            layers.append(torch.nn.Linear(hidden_size, hidden_size))
+            layers.append(torch.nn.ReLU())
             layers.append(torch.nn.Linear(hidden_size, hidden_size))
             layers.append(torch.nn.BatchNorm1d(hidden_size))
             layers.append(torch.nn.Dropout(dropout_rate))
             prev_size = hidden_size
         self.hidden_layers = torch.nn.Sequential(*layers)
         self.output = torch.nn.Linear(input_dim, 1)
-        self.activation = torch.nn.Linear(1,1)
         self.dims = input_dim + 1
         self.stats = args.input_args
         self.loss = float('inf')
@@ -56,8 +55,7 @@ class BaseballModel(torch.nn.Module):
         Forward move for learning. 
         """
         out = self.hidden_layers(x)
-        out = self.output(out)
-        return self.activation(out)
+        return self.output(out)
 
     def set_normalization_params(self, y_mean, y_std):
         """
@@ -68,7 +66,7 @@ class BaseballModel(torch.nn.Module):
 
     def denormalize_output(self, normalized_output):
         """Return denomalized input."""
-        return normalized_output * self.y_std + self.y_mean
+        return (normalized_output * self.y_std) + self.y_mean
 
     def save(self, directory):
         """Saves model to pt. file."""
