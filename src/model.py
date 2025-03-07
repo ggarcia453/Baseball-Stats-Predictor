@@ -34,7 +34,7 @@ class BaseballModel(torch.nn.Module):
                  4 *input_dim, 2 * input_dim, 2 * input_dim, input_dim]  # Increased layer sizes
         layers = []
         prev_size = input_dim
-        for _, hidden_size in enumerate(sizes):
+        for hidden_size in sizes:
             layers.append(torch.nn.Linear(prev_size, hidden_size))
             layers.append(torch.nn.ReLU())
             layers.append(torch.nn.Linear(hidden_size, hidden_size))
@@ -158,7 +158,8 @@ class BaseballModel(torch.nn.Module):
                 "val_loss": val_loss,
                 "mse" : evalres["mse"], 
                 "r2" : evalres["r2"], 
-                "adjusted r2" : evalres["adjusted_r2"]
+                "adjusted r2" : evalres["adjusted_r2"], 
+                "mean_error": evalres["mean_error"]
                 })
         print(f'Minimum loss {self.loss}')
 
@@ -261,13 +262,23 @@ class BaseballModel(torch.nn.Module):
             "rmse": rmse,
             "mae": mae,
             "r2": r2,
-            "adjusted_r2": 1 - (1 - r2) * (len(all_predictions)  - 1)/(len(all_predictions - (self.dims - 1) - 1)),
+            "adjusted_r2": 1 - ((1 - r2) * (len(all_predictions)  - 1)/(len(all_predictions - (self.dims - 1) - 1))),
             "mean_error": mean_error,
             "median_error": median_error,
             "error_std": error_std,
             "percentile_errors": percentile_errors
         }
 
+    def range_prediction(self, input_data, num_samples=5000):
+        self.train()
+        for module in self.modules():
+            if isinstance(module, torch.nn.BatchNorm1d):
+                module.eval()
+        with torch.no_grad():
+            predictions_tensor = torch.stack([self(input_data) for _ in range(num_samples)])
+        mean = predictions_tensor.mean(dim=0)
+        std = predictions_tensor.std(dim=0)
+        return mean, std
 
     def __str__(self):
         return f"Baseball model with {self.dims - 1} input dimension"

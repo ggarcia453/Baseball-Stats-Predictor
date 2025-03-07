@@ -1,10 +1,10 @@
 #! /bin/bash
 PYTHONSRCPATH=src/main.py
 b_p=batting #should be either batting or pitching
-model_directory=models/AVG-HR-OPS-RAR-wRC+-WAR
+model_directory=models/AVG-BABIP-G-HR-K%-RAR-wRC+-WAR
 ## For prediction purposes
 name="Albert Pujols" #Leave Space between first and last name
-year=2003
+year=2017
 
 if [ ! -d "$model_directory" ]; then
   echo "$model_directory does not exist."

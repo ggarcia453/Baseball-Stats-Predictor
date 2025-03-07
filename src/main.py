@@ -79,8 +79,12 @@ def main():
             data = model.data_fetch_player(args.predict_player, args.mode)
             data = data.unsqueeze(0)
             print(data)
-            with torch.no_grad():
-                print(model(data)[0])
+            mean, std = model.range_prediction(data)
+            lower = mean - 1.96 * std
+            upper = mean + 1.96 * std
+            print(f"Prediction: {mean.item():.2f}")
+            print(f"95% Confidence Interval: [{lower.item():.2f}, {upper.item():.2f}]")
+            print(f"Standard Deviation: {std.item():.2f}")
     else:
         if args.use_wandb:
             wandb.init(
