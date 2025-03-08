@@ -40,6 +40,7 @@ class BaseballModel(torch.nn.Module):
             layers.append(torch.nn.Linear(hidden_size, hidden_size))
             layers.append(torch.nn.BatchNorm1d(hidden_size))
             layers.append(torch.nn.Dropout(dropout_rate))
+            layers.append(torch.nn.ReLU())
             prev_size = hidden_size
         self.hidden_layers = torch.nn.Sequential(*layers)
         self.output = torch.nn.Linear(input_dim, 1)
@@ -47,6 +48,8 @@ class BaseballModel(torch.nn.Module):
         self.stats = args.input_args
         self.loss = float('inf')
         self.best = None
+        self.x_mean = None
+        self.x_std = None
         self.y_mean = None
         self.y_std = None
 
@@ -57,12 +60,18 @@ class BaseballModel(torch.nn.Module):
         out = self.hidden_layers(x)
         return self.output(out)
 
-    def set_normalization_params(self, y_mean, y_std):
+    def set_normalization_params(self, x_mean, x_std, y_mean, y_std):
         """
         Set normalization parameters for use later. 
         """
+        self.x_mean = x_mean
+        self.x_std = x_std
         self.y_mean = y_mean
         self.y_std = y_std
+
+    def normalize_input(self, denormalized_input):
+        """Return normalized input."""
+        return (denormalized_input - self.x_mean)/self.x_std
 
     def denormalize_output(self, normalized_output):
         """Return denomalized input."""
@@ -83,6 +92,8 @@ class BaseballModel(torch.nn.Module):
             with open(f"{folder}/best-loss.txt", "w", encoding="UTF-8") as f:
                 f.write(str(self.loss))
                 f.write("\n" + str(name))
+                f.write("\n" + str(self.x_mean) + "+" + str(self.x_std))
+                f.write("\n" + str(self.y_mean) + "," + str(self.y_std))
             print(f"Saved to new folder {folder}")
         else:
             with open(f"{folder}/best-loss.txt", "r", encoding="UTF-8") as f:
@@ -118,9 +129,9 @@ class BaseballModel(torch.nn.Module):
         """
         Training method.
         """
-        train_loader, val_loader, (_x_mean, _x_std, y_mean, y_std) = self._prepare_data(
+        train_loader, val_loader, (x_mean, x_std, y_mean, y_std) = self._prepare_data(
             df_tensor_convert(data))
-        self.set_normalization_params(y_mean, y_std)
+        self.set_normalization_params(x_mean, x_std, y_mean, y_std)
         criterion = torch.nn.MSELoss()
         optimizer = optim.Adam(self.parameters(), lr=learning_rate, weight_decay=l2_lambda)
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min',
@@ -196,21 +207,29 @@ class BaseballModel(torch.nn.Module):
         avg_loss = total_loss / len(val_loader)
         return avg_loss, min(all_preds), max(all_preds)
 
-    def predict(self, input_data):
+    def predict(self, input_data, num_samples=5000):
         """
         Prediction method. Used in predict-player script.
         """
-        self.eval()
+        self.train()
+        normalized_input = self.normalize_input(input_data)
+        for module in self.modules():
+            if isinstance(module, torch.nn.BatchNorm1d):
+                module.eval()
         with torch.no_grad():
-            normalized_output = self(input_data)
-            return self.denormalize_output(normalized_output)
+            predictions_tensor = torch.stack([self(normalized_input) for _ in range(num_samples)])
+            predictions_tensor = self.denormalize_output(predictions_tensor)
+        mean = predictions_tensor.mean(dim=0)
+        std = predictions_tensor.std(dim=0)
+        return mean, std
 
     def evaluation(self, data, print_res=False, ple=False):
         """
         Evaluation method. Used in eval-model script. 
         """
-        _, test_loader, (_,_, y_mean, y_std) = self._prepare_data(df_tensor_convert(data))
-        self.set_normalization_params(y_mean, y_std)
+        _, test_loader, (x_mean, x_std, y_mean, y_std) = self._prepare_data(
+            df_tensor_convert(data))
+        # self.set_normalization_params(x_mean, x_std, y_mean, y_std)
         self.eval()
         all_predictions = []
         all_targets = []
@@ -269,16 +288,16 @@ class BaseballModel(torch.nn.Module):
             "percentile_errors": percentile_errors
         }
 
-    def range_prediction(self, input_data, num_samples=5000):
-        self.train()
-        for module in self.modules():
-            if isinstance(module, torch.nn.BatchNorm1d):
-                module.eval()
-        with torch.no_grad():
-            predictions_tensor = torch.stack([self(input_data) for _ in range(num_samples)])
-        mean = predictions_tensor.mean(dim=0)
-        std = predictions_tensor.std(dim=0)
-        return mean, std
+    # def range_prediction(self, input_data, num_samples=5000):
+    #     self.train()
+    #     for module in self.modules():
+    #         if isinstance(module, torch.nn.BatchNorm1d):
+    #             module.eval()
+    #     with torch.no_grad():
+    #         predictions_tensor = torch.stack([self(input_data) for _ in range(num_samples)])
+    #     mean = predictions_tensor.mean(dim=0)
+    #     std = predictions_tensor.std(dim=0)
+    #     return mean, std
 
     def __str__(self):
         return f"Baseball model with {self.dims - 1} input dimension"

@@ -6,6 +6,8 @@ https://github.com/ggarcia453/Baseball-Stats-Predictor
 
 import argparse
 import torch
+torch.set_printoptions(sci_mode=False)
+import re
 from model import BaseballModel
 from player_stats import validate_dataset, dataset_loader
 import wandb
@@ -61,8 +63,16 @@ def main():
         args = grab_inputs(args)
         model = BaseballModel(args)
         with open(f"{args.load_model}/best-loss.txt", encoding="UTF-8") as f:
-            name = f.readlines()[1].strip()
+            lines = f.readlines()
+            name = lines[1].strip()
+            x_mean, x_std = lines[2].strip().split("+")
+            y_mean, y_std = lines[3].strip().split(",")
         model.load_state_dict(torch.load(f"{args.load_model}/{name}.pt", weights_only=False))
+        x_mean = torch.tensor(list(map(float, re.findall(r"[-+]?\d*\.\d+|\d+", x_mean))))
+        x_std = torch.tensor(list(map(float, re.findall(r"[-+]?\d*\.\d+|\d+", x_std))))
+        y_mean = torch.tensor(list(map(float, re.findall(r"[-+]?\d*\.\d+|\d+", y_mean))))
+        y_std = torch.tensor(list(map(float, re.findall(r"[-+]?\d*\.\d+|\d+", y_std))))
+        model.set_normalization_params(x_mean=x_mean, x_std=x_std, y_mean=y_mean, y_std=y_std)
         print(f"model at {args.load_model} loaded")
         model.eval()
         if args.eval:
@@ -78,8 +88,7 @@ def main():
         else:
             data = model.data_fetch_player(args.predict_player, args.mode)
             data = data.unsqueeze(0)
-            print(data)
-            mean, std = model.range_prediction(data)
+            mean, std = model.predict(data)
             lower = mean - 1.96 * std
             upper = mean + 1.96 * std
             print(f"Prediction: {mean.item():.2f}")
@@ -101,6 +110,7 @@ def main():
             )
         print('Validating Input Output Args')
         validate_args(args)
+        args.input_args.sort()
         dataset = dataset_loader(args)
         args.input_args += [args.output_args]
         print("Validating Dataset")
