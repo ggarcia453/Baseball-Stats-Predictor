@@ -52,6 +52,7 @@ class BaseballModel(torch.nn.Module):
         self.x_std = None
         self.y_mean = None
         self.y_std = None
+        self.norm_pred = True
 
     def forward(self, x):
         """
@@ -212,13 +213,15 @@ class BaseballModel(torch.nn.Module):
         Prediction method. Used in predict-player script.
         """
         self.train()
-        normalized_input = self.normalize_input(input_data)
+        if self.norm_pred:
+            input_data = self.normalize_input(input_data)
         for module in self.modules():
             if isinstance(module, torch.nn.BatchNorm1d):
                 module.eval()
         with torch.no_grad():
-            predictions_tensor = torch.stack([self(normalized_input) for _ in range(num_samples)])
-            predictions_tensor = self.denormalize_output(predictions_tensor)
+            predictions_tensor = torch.stack([self(input_data) for _ in range(num_samples)])
+            if self.norm_pred:
+                predictions_tensor = self.denormalize_output(predictions_tensor)
         mean = predictions_tensor.mean(dim=0)
         std = predictions_tensor.std(dim=0)
         return mean, std

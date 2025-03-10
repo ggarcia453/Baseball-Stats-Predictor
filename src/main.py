@@ -65,14 +65,17 @@ def main():
         with open(f"{args.load_model}/best-loss.txt", encoding="UTF-8") as f:
             lines = f.readlines()
             name = lines[1].strip()
-            x_mean, x_std = lines[2].strip().split("+")
-            y_mean, y_std = lines[3].strip().split(",")
+            if len(lines) >=4:
+                x_mean, x_std = lines[2].strip().split("+")
+                y_mean, y_std = lines[3].strip().split(",")
+                x_mean = torch.tensor(list(map(float, re.findall(r"[-+]?\d*\.\d+|\d+", x_mean))))
+                x_std = torch.tensor(list(map(float, re.findall(r"[-+]?\d*\.\d+|\d+", x_std))))
+                y_mean = torch.tensor(list(map(float, re.findall(r"[-+]?\d*\.\d+|\d+", y_mean))))
+                y_std = torch.tensor(list(map(float, re.findall(r"[-+]?\d*\.\d+|\d+", y_std))))
+                model.set_normalization_params(x_mean=x_mean, x_std=x_std, y_mean=y_mean, y_std=y_std)
+            else:
+                model.norm_pred = False
         model.load_state_dict(torch.load(f"{args.load_model}/{name}.pt", weights_only=False))
-        x_mean = torch.tensor(list(map(float, re.findall(r"[-+]?\d*\.\d+|\d+", x_mean))))
-        x_std = torch.tensor(list(map(float, re.findall(r"[-+]?\d*\.\d+|\d+", x_std))))
-        y_mean = torch.tensor(list(map(float, re.findall(r"[-+]?\d*\.\d+|\d+", y_mean))))
-        y_std = torch.tensor(list(map(float, re.findall(r"[-+]?\d*\.\d+|\d+", y_std))))
-        model.set_normalization_params(x_mean=x_mean, x_std=x_std, y_mean=y_mean, y_std=y_std)
         print(f"model at {args.load_model} loaded")
         model.eval()
         if args.eval:
