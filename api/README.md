@@ -38,31 +38,33 @@ go run .
 This section details how to use the API and what can be expected when running the code. 
 
 ## Endpoints
-
 ### Batting 
 
-The access point for this endpoint is /batting. 
-The query parameters are as folows:
-- team: Filter by team name (use three letter code found in [code table](#code-table))
-- name: Filter by player name (use hyphen for spaces)
-- season: Filter by specific season(s)
-    - Single season: ?season=2023
-    - Range of seasons: ?season=2020&season=2023 (returns 2020-2023)
+The access point for this endpoint is /batting.
+It returns a json of the folling stats:
 
 ### Pitching
 
-The query parameters are as follows:
+The access point for this endpoint is /pitching.
+It returns a json of the folling stats:
+
+
+## Query Parameters
+The query parameters for all endpoints are the same. They are listed below. 
 
 Query Parameters:
 - team: Filter by team name (use three letter code found in [code table](#code-table))
+  - example: Search for Baltimore Orioles PLayers -> ?team=BAL
 - name: Filter by player name (use hyphen for spaces)
   - example: "Barry Bonds" -> "Barry-Bonds"
 - season: Filter by specific season(s)
-  - Single season: ?season=2023
+  - Single season: ?season=2023 (returns 2023 season alone)
   - Range of seasons: ?season=2020&season=2023 (returns 2020-2023)
 
 
 ## Code Table
+This code table is used for filtering stats by specific team. See [Query Parameters](#query-parameters) for more information. 
+
 | Code | Team                          | Division                  |
 |------|-------------------------------|---------------------------|
 | BAL  | Baltimore Orioles             | AL East                   |
@@ -90,7 +92,7 @@ Query Parameters:
 | MON  | Montreal Expos                | NL East                   |
 | CHC  | Chicago Cubs                  | NL Central                |
 | CIN  | Cincinnati Reds               | NL Central                |
-| MIL  | Milwaukee Brewers             | NL Central                |
+| MIL  | Milwaukee Brewers             | NL Central/AL West        |
 | PIT  | Pittsburgh Pirates            | NL Central                |
 | STL  | St. Louis Cardinals           | NL Central                |
 | ARI  | Arizona Diamondbacks          | NL West                   |

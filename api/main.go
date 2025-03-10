@@ -62,7 +62,7 @@ func OpenConnection() (*sqlx.DB, error) {
 	user := os.Getenv("user")
 	password := os.Getenv("password")
 	dbname := os.Getenv("dbname")
-	psqlInfo := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=require host=localhost",
+	psqlInfo := fmt.Sprintf("postgres://%s:%s@db:5432/%s?sslmode=disable",
 		user, password, dbname)
 	db, err := sqlx.Open("postgres", psqlInfo)
 	if err != nil {
