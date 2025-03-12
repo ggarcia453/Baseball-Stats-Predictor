@@ -232,7 +232,8 @@ class BaseballModel(torch.nn.Module):
         """
         _, test_loader, (x_mean, x_std, y_mean, y_std) = self._prepare_data(
             df_tensor_convert(data))
-        # self.set_normalization_params(x_mean, x_std, y_mean, y_std)
+        if self.norm_pred:
+            self.set_normalization_params(x_mean, x_std, y_mean, y_std)
         self.eval()
         all_predictions = []
         all_targets = []
@@ -240,8 +241,12 @@ class BaseballModel(torch.nn.Module):
         with torch.no_grad():
             for inputs, targets in test_loader:
                 outputs = self(inputs)
-                pred_values = self.denormalize_output(outputs).numpy().flatten()
-                target_values = self.denormalize_output(targets.view(-1,1)).numpy().flatten()
+                if self.norm_pred:
+                    pred_values = self.denormalize_output(outputs).numpy().flatten()
+                    target_values = self.denormalize_output(targets.view(-1,1)).numpy().flatten()
+                else:
+                    pred_values = outputs.numpy().flatten()
+                    target_values = targets.view(-1, 1).numpy().flatten()
                 valid_indices = ~(np.isnan(pred_values) | np.isnan(target_values))
                 all_predictions.extend(pred_values[valid_indices])
                 all_targets.extend(target_values[valid_indices])
@@ -290,17 +295,6 @@ class BaseballModel(torch.nn.Module):
             "error_std": error_std,
             "percentile_errors": percentile_errors
         }
-
-    # def range_prediction(self, input_data, num_samples=5000):
-    #     self.train()
-    #     for module in self.modules():
-    #         if isinstance(module, torch.nn.BatchNorm1d):
-    #             module.eval()
-    #     with torch.no_grad():
-    #         predictions_tensor = torch.stack([self(input_data) for _ in range(num_samples)])
-    #     mean = predictions_tensor.mean(dim=0)
-    #     std = predictions_tensor.std(dim=0)
-    #     return mean, std
 
     def __str__(self):
         return f"Baseball model with {self.dims - 1} input dimension"
