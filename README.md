@@ -17,18 +17,6 @@ pip install -r requirements.txt
 wandb login
 ```
 
-# Database Setup
-Install postgres via one of two methods
-1. [Official download/Package Managers](https://www.postgresql.org/download/)
-2. [Installation via downloading files without package manager](https://gist.github.com/yunpengn/832aceac6998e2f894e5780229920cb5)
-
-For method 1, run 
-```bash
-./scripts/postgres_setup.sh
-```
-
-For method 2 you will have to follow the setup guide linked to start the server then run the script. 
-
 # Script Overview
 This section gives a brief overview of the variosu shell scripts included in this repository.
 
